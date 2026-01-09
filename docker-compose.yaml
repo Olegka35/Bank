@@ -4,6 +4,9 @@ services:
     container_name: front-ui-app
     ports:
       - "8080:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
 
   authentication-server-database:
     container_name: authentication-server-database
@@ -38,3 +41,16 @@ services:
       interval: 10s
       retries: 10
       timeout: 5s
+
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    environment:
+      CONFIG_REPO: ${CONFIG_REPO}
+    ports:
+      - "8888:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/actuator/health/readiness || exit 1"]
+      interval: 2s
+      retries: 10
+      start_period: 5s
