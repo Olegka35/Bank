@@ -1,8 +1,40 @@
-version: "3.9"
-
 services:
   frontend:
     build: ./frontend
     container_name: front-ui-app
     ports:
       - "8080:8080"
+
+  authentication-server-database:
+    container_name: authentication-server-database
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${AUTH_DB_USERNAME}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+      POSTGRES_DB: keycloak
+    restart: unless-stopped
+
+  authentication-server:
+    image: keycloak/keycloak:26.4
+    container_name: authentication-server-keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://authentication-server-database:5432/keycloak
+      KC_DB_USERNAME: ${AUTH_DB_USERNAME}
+      KC_DB_PASSWORD: ${AUTH_DB_PASSWORD}
+    ports:
+      - "8090:8080"
+      - "9000:9000"
+    depends_on:
+      - authentication-server-database
+    command:
+      - start-dev
+      - --health-enabled=true
+    healthcheck:
+      test: ["CMD", "test", "-f", "/opt/keycloak/data/health/ready"]
+      start_period: 30s
+      interval: 10s
+      retries: 10
+      timeout: 5s
