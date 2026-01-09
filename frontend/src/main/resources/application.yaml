@@ -1,3 +1,10 @@
 spring:
   application:
-    name: Bank application
+    name: frontend
+  config:
+    import: configserver:http://config-server:8080
+  profiles:
+    active: develop
+  cloud:
+    config:
+      label: main
