@@ -1,13 +1,4 @@
 services:
-  frontend:
-    build: ./frontend
-    container_name: front-ui-app
-    ports:
-      - "8080:8080"
-    depends_on:
-      config-server:
-        condition: service_healthy
-
   authentication-server-database:
     container_name: authentication-server-database
     image: postgres:18
@@ -16,6 +7,8 @@ services:
       POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
       POSTGRES_DB: keycloak
     restart: unless-stopped
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
 
   authentication-server:
     image: keycloak/keycloak:26.4
@@ -27,6 +20,9 @@ services:
       KC_DB_URL: jdbc:postgresql://authentication-server-database:5432/keycloak
       KC_DB_USERNAME: ${AUTH_DB_USERNAME}
       KC_DB_PASSWORD: ${AUTH_DB_PASSWORD}
+      KC_HOSTNAME: auth-server.com
+      KC_HOSTNAME_PORT: 8090
+      KC_HOSTNAME_STRICT: false
     ports:
       - "8090:8080"
       - "9000:9000"
@@ -36,9 +32,9 @@ services:
       - start-dev
       - --health-enabled=true
     healthcheck:
-      test: ["CMD", "test", "-f", "/opt/keycloak/data/health/ready"]
-      start_period: 30s
-      interval: 10s
+      test: ['CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:9000/health/live']
+      start_period: 15s
+      interval: 5s
       retries: 10
       timeout: 5s
 
@@ -54,3 +50,25 @@ services:
       interval: 2s
       retries: 10
       start_period: 5s
+
+  frontend:
+    build: ./frontend
+    container_name: front-ui-app
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "auth-server.com:host-gateway"
+    environment:
+      FRONT_UI_URL: http://localhost:8080
+      BANK_FRONT_UI_SECRET: ${BANK_FRONT_UI_SECRET}
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://auth-server.com:8090
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+volumes:
+  keycloak_data:

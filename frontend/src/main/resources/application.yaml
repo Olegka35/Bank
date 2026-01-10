@@ -2,9 +2,7 @@ spring:
   application:
     name: frontend
   config:
-    import: configserver:http://config-server:8080
-  profiles:
-    active: develop
+    import: configserver:${CONFIG_SERVER_URL}
   cloud:
     config:
       label: main
