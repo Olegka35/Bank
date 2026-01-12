@@ -51,6 +51,24 @@ services:
       retries: 10
       start_period: 5s
 
+  api-gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "8070:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      ACCOUNT_SERVICE_URL: http://account-service:8080
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
   frontend:
     build: ./frontend
     container_name: front-ui-app
