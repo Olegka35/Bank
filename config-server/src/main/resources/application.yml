@@ -3,5 +3,5 @@ spring:
     config:
       server:
         git:
-          uri: ${CONFIG_REPO:https://github.com/Olegka35/bank-config}
+          uri: ${CONFIG_REPO}
           refresh-rate: 60
