@@ -70,5 +70,22 @@ services:
       authentication-server:
         condition: service_healthy
 
+  account-service:
+    build: ./account-service
+    container_name: account-service
+    ports:
+      - "8081:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
 volumes:
   keycloak_data:
