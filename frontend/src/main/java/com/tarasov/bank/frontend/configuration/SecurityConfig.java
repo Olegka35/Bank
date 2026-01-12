@@ -1,4 +1,4 @@
-package com.tarasov.bank.configuration;
+package com.tarasov.bank.frontend.configuration;
 
 
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,8 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
          http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                )
                 .oauth2Login(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -35,7 +36,8 @@ public class SecurityConfig {
                                     String.format("%s/realms/bank/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
                                             authServerUrl, clientId, frontUiUrl);
                             response.sendRedirect(logoutUrl);
-                        }));
+                        })
+                );
          return http.build();
     }
 }

@@ -82,6 +82,7 @@ services:
       SPRING_PROFILES_ACTIVE: develop
       CONFIG_SERVER_URL: http://config-server:8080
       AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      API_GATEWAY_URL: http://api-gateway:8080
     depends_on:
       config-server:
         condition: service_healthy
