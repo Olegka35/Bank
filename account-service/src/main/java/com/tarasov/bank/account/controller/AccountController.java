@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     @PostMapping("/account")
-    @PreAuthorize("hasAuthority('account.update')")
+    @PreAuthorize("hasRole('ACCOUNT_UPDATE')")
     public String updateAccount(@RequestBody @Valid AccountUpdateRequest request) {
         return request.toString();
     }

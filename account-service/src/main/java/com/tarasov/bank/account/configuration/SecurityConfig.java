@@ -71,14 +71,8 @@ public class SecurityConfig {
                 .map(Object::toString)
                 .toList();
 
-        var authorities = roles.stream()
+        return roles.stream()
                 .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());
-
-        if (roles.contains("ACCOUNT")) {
-            authorities.add(new SimpleGrantedAuthority("account.update"));
-        }
-
-        return authorities;
     }
 }
