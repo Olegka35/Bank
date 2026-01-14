@@ -25,8 +25,10 @@ public class BankController {
     private final BankService bankService;
 
     @GetMapping("/")
-    public String index() {
+    public String index(@RequestParam(value = "errors", required = false) String[] errors,
+                        Model model) {
         System.out.println("Auth: " + SecurityContextHolder.getContext().getAuthentication());
+        model.addAttribute("errors", errors);
         return "main";
     }
 
