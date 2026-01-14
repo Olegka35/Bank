@@ -106,5 +106,56 @@ services:
       authentication-server:
         condition: service_healthy
 
+  cash-service:
+    build: ./cash-service
+    container_name: cash-service
+    ports:
+      - "8082:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  transfer-service:
+    build: ./transfer-service
+    container_name: transfer-service
+    ports:
+      - "8083:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8084:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
 volumes:
   keycloak_data:
