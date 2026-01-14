@@ -1,4 +1,4 @@
-package com.tarasov.bank.frontend.dto;
+package com.tarasov.bank.frontend.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

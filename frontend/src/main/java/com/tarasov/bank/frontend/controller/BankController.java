@@ -1,14 +1,18 @@
 package com.tarasov.bank.frontend.controller;
 
-import com.tarasov.bank.frontend.client.ApiGatewayClient;
-import com.tarasov.bank.frontend.dto.AccountUpdateRequest;
+import com.tarasov.bank.frontend.model.AccountUpdateRequest;
+import com.tarasov.bank.frontend.model.BalanceUpdateRequest;
+import com.tarasov.bank.frontend.model.MoneyTransferRequest;
+import com.tarasov.bank.frontend.service.BankService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
@@ -16,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Validated
 public class BankController {
 
-    private final ApiGatewayClient apiGatewayClient;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BankController.class);
+
+    private final BankService bankService;
 
     @GetMapping("/")
     public String index() {
@@ -26,23 +32,19 @@ public class BankController {
 
     @PostMapping("/account")
     public String updateAccountDetails(@Valid AccountUpdateRequest request) {
-        String response = apiGatewayClient.post("/account")
-                .body(request)
-                .retrieve()
-                .body(String.class);
-        System.out.println(response);
+        bankService.updateAccount(request);
         return "redirect:/";
     }
 
     @PostMapping("/cash")
-    public String updateBalance() {
-        System.out.println("Auth: " + SecurityContextHolder.getContext().getAuthentication());
+    public String updateBalance(@Valid BalanceUpdateRequest request) {
+        bankService.updateBalance(request);
         return "redirect:/";
     }
 
     @PostMapping("/transfer")
-    public String transferMoney() {
-        System.out.println("Auth: " + SecurityContextHolder.getContext().getAuthentication());
+    public String transferMoney(MoneyTransferRequest request) {
+        bankService.transferMoney(request);
         return "redirect:/";
     }
 }
