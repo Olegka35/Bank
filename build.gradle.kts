@@ -15,11 +15,11 @@ allprojects {
 
 subprojects {
 	apply(plugin = "java")
-	apply(plugin = "org.springframework.boot")
 	apply(plugin = "io.spring.dependency-management")
 
 	dependencyManagement {
 		imports {
+			mavenBom("org.springframework.boot:spring-boot-dependencies:4.0.1")
 			mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.0")
 		}
 	}
