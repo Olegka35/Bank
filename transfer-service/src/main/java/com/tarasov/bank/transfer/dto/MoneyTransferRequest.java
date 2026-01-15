@@ -1,4 +1,4 @@
-package com.tarasov.bank.frontend.model;
+package com.tarasov.bank.transfer.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
