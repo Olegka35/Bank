@@ -1,4 +1,17 @@
 services:
+  account-database:
+    container_name: account-database
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${ACCOUNT_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ACCOUNT_DB_PASSWORD}
+      POSTGRES_DB: keycloak
+    ports:
+      - "5435:5432"
+    restart: unless-stopped
+    volumes:
+      - account_data:/var/lib/postgresql
+
   authentication-server-database:
     container_name: authentication-server-database
     image: postgres:18
@@ -161,3 +174,4 @@ services:
 
 volumes:
   keycloak_data:
+  account_data:
