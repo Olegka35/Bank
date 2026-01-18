@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: ${ACCOUNT_DB_USERNAME}
       POSTGRES_PASSWORD: ${ACCOUNT_DB_PASSWORD}
-      POSTGRES_DB: keycloak
+      POSTGRES_DB: bank
     ports:
       - "5435:5432"
     restart: unless-stopped
@@ -115,6 +115,9 @@ services:
       SPRING_PROFILES_ACTIVE: develop
       CONFIG_SERVER_URL: http://config-server:8080
       AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      ACCOUNT_DB_URL: jdbc:postgresql://account-database:5432/bank
+      ACCOUNT_DB_USERNAME: ${ACCOUNT_DB_USERNAME}
+      ACCOUNT_DB_PASSWORD: ${ACCOUNT_DB_PASSWORD}
     depends_on:
       config-server:
         condition: service_healthy

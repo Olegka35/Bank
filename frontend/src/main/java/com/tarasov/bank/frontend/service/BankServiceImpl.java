@@ -13,17 +13,18 @@ public class BankServiceImpl implements BankService {
     private final ApiGatewayClient apiGatewayClient;
 
     @Override
-    public AccountDto getAccountDetails() {
-        return null;
+    public AccountResponse getAccountDetails() {
+        return apiGatewayClient.get("/account")
+                .retrieve()
+                .body(AccountResponse.class);
     }
 
     @Override
     public void updateAccount(AccountUpdateRequest request) {
-        String response = apiGatewayClient.post("/account")
+        apiGatewayClient.post("/account")
                 .body(request)
                 .retrieve()
-                .body(String.class);
-        System.out.println(response);
+                .toBodilessEntity();
     }
 
     @Override

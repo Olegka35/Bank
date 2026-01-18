@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -15,6 +16,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-config")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    runtimeOnly("org.postgresql:postgresql")
 }
 
 tasks.test {
