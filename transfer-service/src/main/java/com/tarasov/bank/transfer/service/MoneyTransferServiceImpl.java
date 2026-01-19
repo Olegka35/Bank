@@ -19,6 +19,10 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     @Override
     public void transferMoney(String login, MoneyTransferRequest moneyTransferRequest) {
+        if (login.equals(moneyTransferRequest.login())) {
+            throw new IllegalArgumentException("Not possible to transfer money to yourselves");
+        }
+
         BigDecimal balance = accountServiceRestClient.post("/account/" + login + "/transfer")
                 .body(moneyTransferRequest)
                 .retrieve()

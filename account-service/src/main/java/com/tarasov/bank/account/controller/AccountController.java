@@ -77,4 +77,11 @@ public class AccountController {
         LOGGER.error(e.getMessage(), e);
         return e.getMessage();
     }
+
+    @ExceptionHandler({ IllegalArgumentException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleIllegalArgumentException(IllegalArgumentException e) {
+        LOGGER.error(e.getMessage(), e);
+        return e.getMessage();
+    }
 }

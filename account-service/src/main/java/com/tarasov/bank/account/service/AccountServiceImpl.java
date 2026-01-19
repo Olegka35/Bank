@@ -82,6 +82,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public BigDecimal transferMoney(String senderLogin, String recipientLogin, BigDecimal amount) {
+        if (senderLogin.equals(recipientLogin)) {
+            throw new IllegalArgumentException("Not possible to transfer money to yourselves");
+        }
         Account sender = accountRepository.findByLogin(senderLogin);
         Account recipient = accountRepository.findByLogin(recipientLogin);
         if (sender == null || recipient == null) {
