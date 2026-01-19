@@ -1,4 +1,4 @@
-package com.tarasov.bank.transfer;
+package com.tarasov.bank.notification;
 
 
 import org.springframework.boot.SpringApplication;

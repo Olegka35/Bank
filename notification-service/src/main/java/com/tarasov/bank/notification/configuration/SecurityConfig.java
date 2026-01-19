@@ -1,4 +1,4 @@
-package com.tarasov.bank.transfer.configuration;
+package com.tarasov.bank.notification.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
