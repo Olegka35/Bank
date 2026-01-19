@@ -1,4 +1,4 @@
-package com.tarasov.bank.service.dto;
+package com.tarasov.bank.cash.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;

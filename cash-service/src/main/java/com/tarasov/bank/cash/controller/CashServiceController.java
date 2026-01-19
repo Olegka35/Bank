@@ -1,7 +1,7 @@
-package com.tarasov.bank.service.controller;
+package com.tarasov.bank.cash.controller;
 
 
-import com.tarasov.bank.service.dto.BalanceUpdateRequest;
+import com.tarasov.bank.cash.dto.BalanceUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;

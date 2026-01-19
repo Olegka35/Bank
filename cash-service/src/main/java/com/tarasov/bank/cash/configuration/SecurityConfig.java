@@ -1,4 +1,4 @@
-package com.tarasov.bank.service.configuration;
+package com.tarasov.bank.cash.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

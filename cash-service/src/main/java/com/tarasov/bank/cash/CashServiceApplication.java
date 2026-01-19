@@ -1,4 +1,4 @@
-package com.tarasov.bank.service;
+package com.tarasov.bank.cash;
 
 
 import org.springframework.boot.SpringApplication;

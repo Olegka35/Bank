@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ public class NotificationServiceController {
     private final NotificationProcessService notificationProcessService;
 
     @PostMapping("/notify")
+    @PreAuthorize("hasRole('NOTIFICATIONS_SEND')")
     public void processNotification(@RequestBody @Valid NotificationRequest notificationRequest) {
         notificationProcessService.processNotification(notificationRequest);
     }

@@ -1,4 +1,4 @@
-package com.tarasov.bank.service.dto;
+package com.tarasov.bank.cash.dto;
 
 public enum Action {
     GET,
