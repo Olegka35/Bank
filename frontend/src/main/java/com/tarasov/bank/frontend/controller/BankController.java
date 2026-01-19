@@ -53,12 +53,12 @@ public class BankController {
     @PostMapping("/cash")
     public String updateBalance(@Valid BalanceUpdateRequest request) {
         bankService.updateBalance(request);
-        return "redirect:/";
+        return "redirect:/?info=Balance updated";
     }
 
     @PostMapping("/transfer")
     public String transferMoney(MoneyTransferRequest request) {
         bankService.transferMoney(request);
-        return "redirect:/";
+        return "redirect:/?info=Money transferred";
     }
 }
