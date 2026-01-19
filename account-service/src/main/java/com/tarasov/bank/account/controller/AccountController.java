@@ -4,7 +4,7 @@ package com.tarasov.bank.account.controller;
 import com.tarasov.bank.account.dto.AccountUpdateRequest;
 import com.tarasov.bank.account.dto.BalanceUpdateRequest;
 import com.tarasov.bank.account.dto.MoneyTransferRequest;
-import com.tarasov.bank.account.model.AccountResponse;
+import com.tarasov.bank.account.dto.AccountResponse;
 import com.tarasov.bank.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

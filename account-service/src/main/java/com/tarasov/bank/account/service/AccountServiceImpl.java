@@ -4,7 +4,7 @@ import com.tarasov.bank.account.client.NotificationServiceRestClient;
 import com.tarasov.bank.account.dto.Action;
 import com.tarasov.bank.account.dto.NotificationRequest;
 import com.tarasov.bank.account.model.Account;
-import com.tarasov.bank.account.model.AccountResponse;
+import com.tarasov.bank.account.dto.AccountResponse;
 import com.tarasov.bank.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 

@@ -2,7 +2,7 @@ package com.tarasov.bank.account.service;
 
 import com.tarasov.bank.account.dto.Action;
 import com.tarasov.bank.account.model.Account;
-import com.tarasov.bank.account.model.AccountResponse;
+import com.tarasov.bank.account.dto.AccountResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

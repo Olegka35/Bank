@@ -1,4 +1,6 @@
-package com.tarasov.bank.account.model;
+package com.tarasov.bank.account.dto;
+
+import com.tarasov.bank.account.model.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

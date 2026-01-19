@@ -1,4 +1,4 @@
-package com.tarasov.bank.account.model;
+package com.tarasov.bank.account.dto;
 
 public record AccountDto(
         String login,
