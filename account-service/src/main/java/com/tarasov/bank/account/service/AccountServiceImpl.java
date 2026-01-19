@@ -1,6 +1,7 @@
 package com.tarasov.bank.account.service;
 
 import com.tarasov.bank.account.client.NotificationServiceRestClient;
+import com.tarasov.bank.account.dto.Action;
 import com.tarasov.bank.account.dto.NotificationRequest;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.AccountResponse;
@@ -49,10 +50,32 @@ public class AccountServiceImpl implements AccountService {
         account.setBirthdate(birthdate);
         accountRepository.save(account);
 
+        String notificationMessage =
+                String.format("Account details updated: full name -> %s, birth date -> %s",
+                        fullName, birthdate);
         notificationServiceRestClient
                 .post("/notify")
-                .body(new NotificationRequest("Test message"))
+                .body(new NotificationRequest(login, notificationMessage))
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    @Override
+    @Transactional
+    public BigDecimal updateAccountBalance(String login, Action action, BigDecimal amount) {
+        Account account = accountRepository.findByLogin(login);
+        if (account == null) {
+            throw new NoSuchElementException("Account not found");
+        }
+        if (Action.GET.equals(action)) {
+            if (account.getBalance().compareTo(amount) < 0) {
+                throw new IllegalStateException("Not enough balance");
+            }
+            account.setBalance(account.getBalance().subtract(amount));
+        } else if (Action.PUT.equals(action)) {
+            account.setBalance(account.getBalance().add(amount));
+        }
+        account = accountRepository.save(account);
+        return account.getBalance();
     }
 }

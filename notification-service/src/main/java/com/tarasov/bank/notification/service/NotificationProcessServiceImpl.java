@@ -13,6 +13,9 @@ public class NotificationProcessServiceImpl implements NotificationProcessServic
 
     @Override
     public void processNotification(NotificationRequest notificationRequest) {
-        LOGGER.info(notificationRequest.message());
+        LOGGER.info("[{}] {}",
+                notificationRequest.login(),
+                notificationRequest.message()
+        );
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     public String handleUnauthorizedException(Exception ex) {
         LOGGER.error(ex.getMessage(), ex);
         return printError("Not enough permissions to perform this operation");
+    }
+
+    @ExceptionHandler( { HttpStatusCodeException.class } )
+    public String handleWebClientException(HttpStatusCodeException ex) {
+        LOGGER.error(ex.getMessage(), ex);
+        return printError(ex.getMessage());
     }
 
     @ExceptionHandler( { MethodArgumentNotValidException.class } )

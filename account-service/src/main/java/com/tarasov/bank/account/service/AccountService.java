@@ -1,5 +1,6 @@
 package com.tarasov.bank.account.service;
 
+import com.tarasov.bank.account.dto.Action;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.AccountResponse;
 
@@ -12,4 +13,5 @@ public interface AccountService {
     Account createAccount(String login, String fullName, LocalDate birthday, BigDecimal balance);
     AccountResponse getAccountInfo(String login);
     void updateAccountInfo(String login, String fullName, LocalDate birthdate);
+    BigDecimal updateAccountBalance(String login, Action action, BigDecimal amount);
 }

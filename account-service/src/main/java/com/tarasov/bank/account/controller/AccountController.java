@@ -2,25 +2,30 @@ package com.tarasov.bank.account.controller;
 
 
 import com.tarasov.bank.account.dto.AccountUpdateRequest;
+import com.tarasov.bank.account.dto.BalanceUpdateRequest;
 import com.tarasov.bank.account.model.AccountResponse;
 import com.tarasov.bank.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 
 @RestController
 @Validated
 @RequiredArgsConstructor
 public class AccountController {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
     private final AccountService accountService;
 
@@ -43,5 +48,26 @@ public class AccountController {
                 request.name(),
                 request.birthdate()
         );
+    }
+
+    @PostMapping("/account/{login}/cash")
+    @PreAuthorize("hasRole('ACCOUNTS_WRITE')")
+    public BigDecimal updateAccountBalance(@RequestBody @Valid BalanceUpdateRequest request,
+                                           @PathVariable String login) {
+        return accountService.updateAccountBalance(login, request.action(), request.value());
+    }
+
+    @ExceptionHandler({ IllegalStateException.class })
+    @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
+    public String handleIllegalStateException(IllegalStateException e) {
+        LOGGER.error(e.getMessage(), e);
+        return e.getMessage();
+    }
+
+    @ExceptionHandler({ NoSuchElementException.class })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNoSuchElementException(NoSuchElementException e) {
+        LOGGER.error(e.getMessage(), e);
+        return e.getMessage();
     }
 }

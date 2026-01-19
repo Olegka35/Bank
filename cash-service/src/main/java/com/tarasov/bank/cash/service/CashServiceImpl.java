@@ -1,0 +1,38 @@
+package com.tarasov.bank.cash.service;
+
+import com.tarasov.bank.cash.client.AccountServiceRestClient;
+import com.tarasov.bank.cash.client.NotificationServiceRestClient;
+import com.tarasov.bank.cash.dto.Action;
+import com.tarasov.bank.cash.dto.BalanceUpdateRequest;
+import com.tarasov.bank.cash.dto.NotificationRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+
+@Service
+@RequiredArgsConstructor
+public class CashServiceImpl implements CashService {
+
+    private final AccountServiceRestClient accountServiceRestClient;
+    private final NotificationServiceRestClient notificationServiceRestClient;
+
+    @Override
+    public BigDecimal updateBalance(String login, BalanceUpdateRequest balanceUpdateRequest) {
+        BigDecimal balance = accountServiceRestClient.post("/account/" + login + "/cash")
+                .body(balanceUpdateRequest)
+                .retrieve()
+                .body(BigDecimal.class);
+
+        String notificationMessage =
+                String.format("Balance updated (%s%.2f): %.2f",
+                        balanceUpdateRequest.action().equals(Action.GET) ? "-" : "+",
+                        balanceUpdateRequest.value(),
+                        balance);
+        notificationServiceRestClient.post("/notify")
+                .body(new NotificationRequest(login, notificationMessage))
+                .retrieve()
+                .toBodilessEntity();
+        return balance;
+    }
+}
