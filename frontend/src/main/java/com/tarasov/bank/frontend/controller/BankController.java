@@ -34,6 +34,7 @@ public class BankController {
                 model.addAttribute("name", response.name());
                 model.addAttribute("birthdate", response.birthdate());
                 model.addAttribute("sum", response.sum());
+                model.addAttribute("accounts", response.accounts());
             }
             model.addAttribute("errors", errors);
             model.addAttribute("info", info);

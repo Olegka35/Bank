@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -36,7 +38,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountResponse getAccountInfo(String login) {
-        return AccountResponse.from(accountRepository.findByLogin(login));
+        Account account = accountRepository.findByLogin(login);
+        List<Account> otherAccounts = accountRepository.findAccountsByLoginNot(login);
+        return AccountResponse.from(account, otherAccounts);
     }
 
     @Override
