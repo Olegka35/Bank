@@ -1,6 +1,8 @@
 package com.tarasov.bank.notification.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record NotificationRequest(
-        String message
+        @NotBlank String message
 ) {
 }

@@ -1,5 +1,7 @@
 package com.tarasov.bank.account.service;
 
+import com.tarasov.bank.account.client.NotificationServiceRestClient;
+import com.tarasov.bank.account.dto.NotificationRequest;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.AccountResponse;
 import com.tarasov.bank.account.repository.AccountRepository;
@@ -16,6 +18,7 @@ import java.util.NoSuchElementException;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final NotificationServiceRestClient notificationServiceRestClient;
 
     @Override
     public boolean existsByLogin(String login) {
@@ -45,5 +48,11 @@ public class AccountServiceImpl implements AccountService {
         account.setFullName(fullName);
         account.setBirthdate(birthdate);
         accountRepository.save(account);
+
+        notificationServiceRestClient
+                .post("/notify")
+                .body(new NotificationRequest("Test message"))
+                .retrieve()
+                .toBodilessEntity();
     }
 }
