@@ -25,7 +25,7 @@ public class CashServiceImpl implements CashService {
                 .body(BigDecimal.class);
 
         String notificationMessage =
-                String.format("Balance updated (%s%.2f): %.2f",
+                String.format("Balance updated (%s%.2f р.): %.2f р.",
                         balanceUpdateRequest.action().equals(Action.GET) ? "-" : "+",
                         balanceUpdateRequest.value(),
                         balance);

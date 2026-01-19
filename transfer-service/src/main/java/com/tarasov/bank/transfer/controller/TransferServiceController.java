@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class TransferServiceController {
 
-    @PostMapping("/cash")
+    @PostMapping("/transfer")
     @PreAuthorize("hasRole('MONEY_TRANSFER')")
     public String updateAccount(@RequestBody @Valid MoneyTransferRequest request) {
         return request.toString();

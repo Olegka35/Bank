@@ -14,4 +14,5 @@ public interface AccountService {
     AccountResponse getAccountInfo(String login);
     void updateAccountInfo(String login, String fullName, LocalDate birthdate);
     BigDecimal updateAccountBalance(String login, Action action, BigDecimal amount);
+    BigDecimal transferMoney(String senderLogin, String recipientLogin, BigDecimal amount);
 }

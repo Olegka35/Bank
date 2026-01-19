@@ -78,4 +78,22 @@ public class AccountServiceImpl implements AccountService {
         account = accountRepository.save(account);
         return account.getBalance();
     }
+
+    @Override
+    @Transactional
+    public BigDecimal transferMoney(String senderLogin, String recipientLogin, BigDecimal amount) {
+        Account sender = accountRepository.findByLogin(senderLogin);
+        Account recipient = accountRepository.findByLogin(recipientLogin);
+        if (sender == null || recipient == null) {
+            throw new NoSuchElementException("Account not found");
+        }
+        if (sender.getBalance().compareTo(amount) < 0) {
+            throw new IllegalStateException("Not enough balance");
+        }
+        sender.setBalance(sender.getBalance().subtract(amount));
+        recipient.setBalance(recipient.getBalance().add(amount));
+        sender = accountRepository.save(sender);
+        accountRepository.save(recipient);
+        return sender.getBalance();
+    }
 }
