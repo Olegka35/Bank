@@ -25,7 +25,7 @@ public class SecurityConfig {
     private String clientId;
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) {
          http
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated()

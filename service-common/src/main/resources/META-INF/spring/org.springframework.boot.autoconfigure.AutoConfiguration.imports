@@ -1,2 +1,3 @@
 com.tarasov.bank.common.configuration.SecurityConfig
 com.tarasov.bank.common.configuration.OAuth2ClientManagerConfig
+com.tarasov.bank.common.configuration.CommonExceptionHandlerConfiguration

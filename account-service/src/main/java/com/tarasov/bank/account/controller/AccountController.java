@@ -5,14 +5,11 @@ import com.tarasov.bank.account.dto.AccountUpdateRequest;
 import com.tarasov.bank.account.dto.BalanceUpdateRequest;
 import com.tarasov.bank.account.dto.MoneyTransferRequest;
 import com.tarasov.bank.account.dto.AccountResponse;
-import com.tarasov.bank.account.model.exception.AccountNotFoundException;
-import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
 import com.tarasov.bank.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -63,26 +60,5 @@ public class AccountController {
     public BigDecimal transferMoney(@PathVariable String login,
                               @RequestBody @Valid MoneyTransferRequest request) {
         return accountService.transferMoney(login, request.login(), request.value());
-    }
-
-    @ExceptionHandler({ InsufficientBalanceException.class })
-    @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
-    public String handleNotEnoughBalanceError(InsufficientBalanceException e) {
-        LOGGER.error(e.getMessage(), e);
-        return e.getMessage();
-    }
-
-    @ExceptionHandler({ AccountNotFoundException.class })
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleAccountNotFoundError(AccountNotFoundException e) {
-        LOGGER.error(e.getMessage(), e);
-        return e.getMessage();
-    }
-
-    @ExceptionHandler({ IllegalArgumentException.class })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIllegalArgumentException(IllegalArgumentException e) {
-        LOGGER.error(e.getMessage(), e);
-        return e.getMessage();
     }
 }
