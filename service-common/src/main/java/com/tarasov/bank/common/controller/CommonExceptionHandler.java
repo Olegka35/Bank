@@ -22,9 +22,10 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler({ HttpStatusCodeException.class })
     public ResponseEntity<ApiError> handleApiError(HttpStatusCodeException e) {
-        LOGGER.error(e.getMessage(), e);
+        ApiError apiError = e.getResponseBodyAs(ApiError.class);
+        LOGGER.error("ApiError: {}", apiError);
         return ResponseEntity.status(e.getStatusCode())
-                .body(e.getResponseBodyAs(ApiError.class));
+                .body(apiError);
     }
 
     @ExceptionHandler({ Exception.class })
