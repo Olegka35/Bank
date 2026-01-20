@@ -1,6 +1,6 @@
-package com.tarasov.bank.account.dto;
+package com.tarasov.bank.account.model.dto;
 
-import com.tarasov.bank.account.dto.validator.Adult;
+import com.tarasov.bank.account.model.validator.Adult;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

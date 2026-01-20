@@ -1,7 +1,7 @@
 package com.tarasov.bank.account.client;
 
 
-import com.tarasov.bank.account.dto.NotificationRequest;
+import com.tarasov.bank.account.model.dto.NotificationRequest;
 import com.tarasov.bank.common.client.AbstractServiceClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;

@@ -1,4 +1,4 @@
-package com.tarasov.bank.account.dto.validator;
+package com.tarasov.bank.account.model.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

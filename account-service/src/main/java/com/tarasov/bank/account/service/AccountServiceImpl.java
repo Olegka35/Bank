@@ -1,10 +1,10 @@
 package com.tarasov.bank.account.service;
 
 import com.tarasov.bank.account.client.NotificationServiceClient;
-import com.tarasov.bank.account.dto.Action;
-import com.tarasov.bank.account.dto.NotificationRequest;
+import com.tarasov.bank.account.model.dto.Action;
+import com.tarasov.bank.account.model.dto.NotificationRequest;
 import com.tarasov.bank.account.model.Account;
-import com.tarasov.bank.account.dto.AccountResponse;
+import com.tarasov.bank.account.model.dto.AccountResponse;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
 import com.tarasov.bank.account.repository.AccountRepository;

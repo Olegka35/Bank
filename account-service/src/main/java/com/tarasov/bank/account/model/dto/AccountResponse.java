@@ -1,4 +1,4 @@
-package com.tarasov.bank.account.dto;
+package com.tarasov.bank.account.model.dto;
 
 import com.tarasov.bank.account.model.Account;
 
