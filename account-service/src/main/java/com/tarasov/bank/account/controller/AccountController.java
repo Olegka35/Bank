@@ -5,6 +5,8 @@ import com.tarasov.bank.account.dto.AccountUpdateRequest;
 import com.tarasov.bank.account.dto.BalanceUpdateRequest;
 import com.tarasov.bank.account.dto.MoneyTransferRequest;
 import com.tarasov.bank.account.dto.AccountResponse;
+import com.tarasov.bank.account.model.exception.AccountNotFoundException;
+import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
 import com.tarasov.bank.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.NoSuchElementException;
 
 @RestController
 @Validated
@@ -64,16 +65,16 @@ public class AccountController {
         return accountService.transferMoney(login, request.login(), request.value());
     }
 
-    @ExceptionHandler({ IllegalStateException.class })
+    @ExceptionHandler({ InsufficientBalanceException.class })
     @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
-    public String handleIllegalStateException(IllegalStateException e) {
+    public String handleNotEnoughBalanceError(InsufficientBalanceException e) {
         LOGGER.error(e.getMessage(), e);
         return e.getMessage();
     }
 
-    @ExceptionHandler({ NoSuchElementException.class })
+    @ExceptionHandler({ AccountNotFoundException.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNoSuchElementException(NoSuchElementException e) {
+    public String handleAccountNotFoundError(AccountNotFoundException e) {
         LOGGER.error(e.getMessage(), e);
         return e.getMessage();
     }
