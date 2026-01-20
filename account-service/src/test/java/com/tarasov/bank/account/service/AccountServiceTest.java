@@ -4,6 +4,7 @@ package com.tarasov.bank.account.service;
 import com.tarasov.bank.account.client.NotificationServiceClient;
 import com.tarasov.bank.account.model.dto.AccountResponse;
 import com.tarasov.bank.account.model.dto.Action;
+import com.tarasov.bank.account.model.dto.BalanceResponse;
 import com.tarasov.bank.account.model.dto.NotificationRequest;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
@@ -119,9 +120,9 @@ public class AccountServiceTest {
         when(accountRepository.findByLogin("Oleg")).thenReturn(account);
         when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
-        BigDecimal newBalance = accountService.updateAccountBalance("Oleg", Action.PUT, BigDecimal.valueOf(1000));
+        BalanceResponse balanceResponse = accountService.updateAccountBalance("Oleg", Action.PUT, BigDecimal.valueOf(1000));
 
-        assertEquals(BigDecimal.valueOf(501_000), newBalance);
+        assertEquals(BigDecimal.valueOf(501_000), balanceResponse.balance());
 
         ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
         verify(accountRepository).save(accountArgumentCaptor.capture());
@@ -135,8 +136,9 @@ public class AccountServiceTest {
         when(accountRepository.findByLogin("Oleg")).thenReturn(account);
         when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
-        BigDecimal newBalance = accountService.updateAccountBalance("Oleg", Action.GET, BigDecimal.valueOf(1000));
+        BalanceResponse balanceResponse = accountService.updateAccountBalance("Oleg", Action.GET, BigDecimal.valueOf(1000));
 
+        assertEquals(BigDecimal.valueOf(499_000), balanceResponse.balance());
         ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
         verify(accountRepository).save(accountArgumentCaptor.capture());
         assertEquals(new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(499_000)),
@@ -173,9 +175,9 @@ public class AccountServiceTest {
         when(accountRepository.findByLogin("Trakand")).thenReturn(recipient);
         when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
-        BigDecimal newBalance = accountService.transferMoney("Oleg", "Trakand", BigDecimal.valueOf(100_000));
+        BalanceResponse balanceResponse = accountService.transferMoney("Oleg", "Trakand", BigDecimal.valueOf(100_000));
 
-        assertEquals(BigDecimal.valueOf(400_000), newBalance);
+        assertEquals(BigDecimal.valueOf(400_000), balanceResponse.balance());
 
         ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
         verify(accountRepository, times(2)).save(accountArgumentCaptor.capture());

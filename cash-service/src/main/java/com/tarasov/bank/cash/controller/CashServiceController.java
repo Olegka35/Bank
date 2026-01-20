@@ -1,6 +1,7 @@
 package com.tarasov.bank.cash.controller;
 
 
+import com.tarasov.bank.cash.dto.BalanceResponse;
 import com.tarasov.bank.cash.dto.BalanceUpdateRequest;
 import com.tarasov.bank.cash.service.CashService;
 import jakarta.validation.Valid;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 
 @RestController
 @Validated
@@ -23,8 +23,8 @@ public class CashServiceController {
 
     @PostMapping("/cash")
     @PreAuthorize("hasRole('CASH_MANAGER')")
-    public BigDecimal updateAccount(@RequestBody @Valid BalanceUpdateRequest request,
-                                    Authentication authentication) {
+    public BalanceResponse updateAccount(@RequestBody @Valid BalanceUpdateRequest request,
+                                         Authentication authentication) {
         return cashService.updateBalance(authentication.getName(), request);
     }
 }

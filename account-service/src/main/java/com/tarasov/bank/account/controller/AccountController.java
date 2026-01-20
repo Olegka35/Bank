@@ -1,10 +1,7 @@
 package com.tarasov.bank.account.controller;
 
 
-import com.tarasov.bank.account.model.dto.AccountUpdateRequest;
-import com.tarasov.bank.account.model.dto.BalanceUpdateRequest;
-import com.tarasov.bank.account.model.dto.MoneyTransferRequest;
-import com.tarasov.bank.account.model.dto.AccountResponse;
+import com.tarasov.bank.account.model.dto.*;
 import com.tarasov.bank.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,14 +47,14 @@ public class AccountController {
 
     @PostMapping("/account/{login}/cash")
     @PreAuthorize("hasRole('ACCOUNTS_WRITE')")
-    public BigDecimal updateAccountBalance(@PathVariable String login,
-                                           @RequestBody @Valid BalanceUpdateRequest request) {
+    public BalanceResponse updateAccountBalance(@PathVariable String login,
+                                                @RequestBody @Valid BalanceUpdateRequest request) {
         return accountService.updateAccountBalance(login, request.action(), request.value());
     }
 
     @PostMapping("/account/{login}/transfer")
     @PreAuthorize("hasRole('ACCOUNTS_WRITE')")
-    public BigDecimal transferMoney(@PathVariable String login,
+    public BalanceResponse transferMoney(@PathVariable String login,
                               @RequestBody @Valid MoneyTransferRequest request) {
         return accountService.transferMoney(login, request.login(), request.value());
     }

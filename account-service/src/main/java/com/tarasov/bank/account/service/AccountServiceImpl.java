@@ -2,6 +2,7 @@ package com.tarasov.bank.account.service;
 
 import com.tarasov.bank.account.client.NotificationServiceClient;
 import com.tarasov.bank.account.model.dto.Action;
+import com.tarasov.bank.account.model.dto.BalanceResponse;
 import com.tarasov.bank.account.model.dto.NotificationRequest;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.dto.AccountResponse;
@@ -62,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public BigDecimal updateAccountBalance(String login, Action action, BigDecimal amount) {
+    public BalanceResponse updateAccountBalance(String login, Action action, BigDecimal amount) {
         Account account = accountRepository.findByLogin(login);
         if (account == null) {
             throw new AccountNotFoundException();
@@ -76,12 +77,12 @@ public class AccountServiceImpl implements AccountService {
             account.setBalance(account.getBalance().add(amount));
         }
         account = accountRepository.save(account);
-        return account.getBalance();
+        return new BalanceResponse(account.getBalance());
     }
 
     @Override
     @Transactional
-    public BigDecimal transferMoney(String senderLogin, String recipientLogin, BigDecimal amount) {
+    public BalanceResponse transferMoney(String senderLogin, String recipientLogin, BigDecimal amount) {
         if (senderLogin.equals(recipientLogin)) {
             throw new IllegalArgumentException("Not possible to transfer money to yourselves");
         }
@@ -97,6 +98,6 @@ public class AccountServiceImpl implements AccountService {
         recipient.setBalance(recipient.getBalance().add(amount));
         sender = accountRepository.save(sender);
         accountRepository.save(recipient);
-        return sender.getBalance();
+        return new BalanceResponse(sender.getBalance());
     }
 }
