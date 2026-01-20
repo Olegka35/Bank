@@ -1,6 +1,6 @@
 package com.tarasov.bank.cash.service;
 
-import com.tarasov.bank.cash.client.AccountServiceRestClient;
+import com.tarasov.bank.cash.client.AccountServiceClient;
 import com.tarasov.bank.cash.client.NotificationServiceClient;
 import com.tarasov.bank.cash.dto.Action;
 import com.tarasov.bank.cash.dto.BalanceUpdateRequest;
@@ -14,15 +14,13 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CashServiceImpl implements CashService {
 
-    private final AccountServiceRestClient accountServiceRestClient;
+    private final AccountServiceClient accountServiceClient;
     private final NotificationServiceClient notificationServiceClient;
 
     @Override
     public BigDecimal updateBalance(String login, BalanceUpdateRequest balanceUpdateRequest) {
-        BigDecimal balance = accountServiceRestClient.post("/account/" + login + "/cash")
-                .body(balanceUpdateRequest)
-                .retrieve()
-                .body(BigDecimal.class);
+        String uri = String.format("/account/%s/cash", login);
+        BigDecimal balance = accountServiceClient.post(uri, balanceUpdateRequest, BigDecimal.class);
 
         String notificationMessage =
                 String.format("Balance updated (%s%.2f р.): %.2f р.",

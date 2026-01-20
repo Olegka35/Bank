@@ -4,7 +4,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.web.client.RestClient;
 
-public class AbstractServiceClient {
+public abstract class AbstractServiceClient {
 
     private final RestClient restClient;
     private final OAuth2AuthorizedClientManager authorizedClientManager;
@@ -20,14 +20,23 @@ public class AbstractServiceClient {
                 .build();
     }
 
-    protected void post(String uri, Object body) {
+    private RestClient.ResponseSpec abstractPost(String uri, Object body) {
         String authToken = getAuthToken();
-        restClient.post()
+        return restClient.post()
                 .uri(uri)
                 .headers(h -> h.setBearerAuth(authToken))
                 .body(body)
-                .retrieve()
+                .retrieve();
+    }
+
+    public void post(String uri, Object body) {
+        abstractPost(uri, body)
                 .toBodilessEntity();
+    }
+
+    public <T> T post(String uri, Object body, Class<T> responseType) {
+        return abstractPost(uri, body)
+                .body(responseType);
     }
 
     private String getAuthToken() {

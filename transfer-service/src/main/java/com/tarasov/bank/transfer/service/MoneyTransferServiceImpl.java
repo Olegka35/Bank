@@ -1,6 +1,6 @@
 package com.tarasov.bank.transfer.service;
 
-import com.tarasov.bank.transfer.client.AccountServiceRestClient;
+import com.tarasov.bank.transfer.client.AccountServiceClient;
 import com.tarasov.bank.transfer.client.NotificationServiceClient;
 import com.tarasov.bank.transfer.dto.MoneyTransferRequest;
 import com.tarasov.bank.transfer.dto.NotificationRequest;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class MoneyTransferServiceImpl implements MoneyTransferService {
 
-    private final AccountServiceRestClient accountServiceRestClient;
+    private final AccountServiceClient accountServiceClient;
     private final NotificationServiceClient notificationServiceClient;
 
     @Override
@@ -22,11 +22,8 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         if (login.equals(moneyTransferRequest.login())) {
             throw new IllegalArgumentException("Not possible to transfer money to yourselves");
         }
-
-        BigDecimal balance = accountServiceRestClient.post("/account/" + login + "/transfer")
-                .body(moneyTransferRequest)
-                .retrieve()
-                .body(BigDecimal.class);
+        String uri = String.format("/account/%s/transfer", login);
+        BigDecimal balance = accountServiceClient.post(uri, moneyTransferRequest, BigDecimal.class);
 
         String notificationMessage =
                 String.format("Money transfer (%.2f р.) -> %s (Remaining balance: %.2f р.)",
