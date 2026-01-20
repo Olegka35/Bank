@@ -1,7 +1,7 @@
 package com.tarasov.bank.transfer.service;
 
 import com.tarasov.bank.transfer.client.AccountServiceRestClient;
-import com.tarasov.bank.transfer.client.NotificationServiceRestClient;
+import com.tarasov.bank.transfer.client.NotificationServiceClient;
 import com.tarasov.bank.transfer.dto.MoneyTransferRequest;
 import com.tarasov.bank.transfer.dto.NotificationRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     private final AccountServiceRestClient accountServiceRestClient;
-    private final NotificationServiceRestClient notificationServiceRestClient;
+    private final NotificationServiceClient notificationServiceClient;
 
     @Override
     public void transferMoney(String login, MoneyTransferRequest moneyTransferRequest) {
@@ -33,9 +33,6 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
                         moneyTransferRequest.value(),
                         moneyTransferRequest.login(),
                         balance);
-        notificationServiceRestClient.post("/notify")
-                .body(new NotificationRequest(login, notificationMessage))
-                .retrieve()
-                .toBodilessEntity();
+        notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
     }
 }

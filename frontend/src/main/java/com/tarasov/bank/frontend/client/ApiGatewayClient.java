@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -18,7 +17,6 @@ import org.springframework.web.client.RestClient;
 public class ApiGatewayClient {
 
     private final RestClient apiGWRestClient;
-    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
     private final OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
 
     public RestClient.RequestHeadersSpec<?> get(String uri) {

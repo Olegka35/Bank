@@ -1,7 +1,7 @@
 package com.tarasov.bank.cash.service;
 
 import com.tarasov.bank.cash.client.AccountServiceRestClient;
-import com.tarasov.bank.cash.client.NotificationServiceRestClient;
+import com.tarasov.bank.cash.client.NotificationServiceClient;
 import com.tarasov.bank.cash.dto.Action;
 import com.tarasov.bank.cash.dto.BalanceUpdateRequest;
 import com.tarasov.bank.cash.dto.NotificationRequest;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class CashServiceImpl implements CashService {
 
     private final AccountServiceRestClient accountServiceRestClient;
-    private final NotificationServiceRestClient notificationServiceRestClient;
+    private final NotificationServiceClient notificationServiceClient;
 
     @Override
     public BigDecimal updateBalance(String login, BalanceUpdateRequest balanceUpdateRequest) {
@@ -29,10 +29,7 @@ public class CashServiceImpl implements CashService {
                         balanceUpdateRequest.action().equals(Action.GET) ? "-" : "+",
                         balanceUpdateRequest.value(),
                         balance);
-        notificationServiceRestClient.post("/notify")
-                .body(new NotificationRequest(login, notificationMessage))
-                .retrieve()
-                .toBodilessEntity();
+        notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
         return balance;
     }
 }
