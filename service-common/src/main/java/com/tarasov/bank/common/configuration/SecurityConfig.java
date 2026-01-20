@@ -1,8 +1,9 @@
-package com.tarasov.bank.account.configuration;
+package com.tarasov.bank.common.configuration;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,12 +20,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
-@Configuration
+@AutoConfiguration
 @EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
+    @ConditionalOnMissingBean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/**").permitAll()
@@ -35,22 +36,11 @@ public class SecurityConfig {
             oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()));
         });
 
-        http.exceptionHandling(exception -> exception
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write(
-                            accessDeniedException.getMessage() != null
-                                    ? accessDeniedException.getMessage()
-                                    : "Access denied"
-                    );
-                })
-        );
-
         return http.build();
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(this::extractAuthorities);
@@ -82,6 +72,8 @@ public class SecurityConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean( { ClientRegistrationRepository.class, OAuth2AuthorizedClientService.class } )
     public OAuth2AuthorizedClientManager authorizedClientManager(
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientService authorizedClientService
