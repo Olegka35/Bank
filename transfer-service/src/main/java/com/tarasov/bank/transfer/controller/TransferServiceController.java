@@ -2,6 +2,7 @@ package com.tarasov.bank.transfer.controller;
 
 
 import com.tarasov.bank.common.dto.ApiError;
+import com.tarasov.bank.transfer.dto.BalanceResponse;
 import com.tarasov.bank.transfer.dto.MoneyTransferRequest;
 import com.tarasov.bank.transfer.service.MoneyTransferService;
 import jakarta.validation.Valid;
@@ -32,9 +33,9 @@ public class TransferServiceController {
 
     @PostMapping("/transfer")
     @PreAuthorize("hasRole('MONEY_TRANSFER')")
-    public void updateAccount(@RequestBody @Valid MoneyTransferRequest request,
-                                Authentication authentication) {
-        moneyTransferService.transferMoney(authentication.getName(), request);
+    public BalanceResponse updateAccount(@RequestBody @Valid MoneyTransferRequest request,
+                                         Authentication authentication) {
+        return moneyTransferService.transferMoney(authentication.getName(), request);
     }
 
     @ExceptionHandler({ IllegalArgumentException.class })

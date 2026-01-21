@@ -17,7 +17,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     private final NotificationServiceClient notificationServiceClient;
 
     @Override
-    public void transferMoney(String login, MoneyTransferRequest moneyTransferRequest) {
+    public BalanceResponse transferMoney(String login, MoneyTransferRequest moneyTransferRequest) {
         if (login.equals(moneyTransferRequest.login())) {
             throw new IllegalArgumentException("Not possible to transfer money to yourselves");
         }
@@ -31,5 +31,6 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
                         moneyTransferRequest.login(),
                         balanceResponse.balance());
         notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
+        return balanceResponse;
     }
 }

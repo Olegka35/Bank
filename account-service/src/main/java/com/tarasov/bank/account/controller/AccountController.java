@@ -37,9 +37,9 @@ public class AccountController {
 
     @PostMapping("/account")
     @PreAuthorize("hasRole('ACCOUNT_UPDATE')")
-    public void updateAccount(@RequestBody @Valid AccountUpdateRequest request,
-                              Authentication authentication) {
-        accountService.updateAccountInfo(authentication.getName(),
+    public AccountUpdateResponse updateAccount(@RequestBody @Valid AccountUpdateRequest request,
+                                               Authentication authentication) {
+        return accountService.updateAccountInfo(authentication.getName(),
                 request.name(),
                 request.birthdate()
         );
@@ -55,7 +55,7 @@ public class AccountController {
     @PostMapping("/account/{login}/transfer")
     @PreAuthorize("hasRole('ACCOUNTS_WRITE')")
     public BalanceResponse transferMoney(@PathVariable String login,
-                              @RequestBody @Valid MoneyTransferRequest request) {
+                                         @RequestBody @Valid MoneyTransferRequest request) {
         return accountService.transferMoney(login, request.login(), request.value());
     }
 }

@@ -2,10 +2,7 @@ package com.tarasov.bank.account.service;
 
 
 import com.tarasov.bank.account.client.NotificationServiceClient;
-import com.tarasov.bank.account.model.dto.AccountResponse;
-import com.tarasov.bank.account.model.dto.Action;
-import com.tarasov.bank.account.model.dto.BalanceResponse;
-import com.tarasov.bank.account.model.dto.NotificationRequest;
+import com.tarasov.bank.account.model.dto.*;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
@@ -15,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,7 +22,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +54,7 @@ public class AccountServiceTest {
     @Test
     public void canCreateAccount() {
         Account testAccount = new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.ZERO);
-        when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
+        when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
         assertEquals(testAccount, accountService.createAccount("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.ZERO));
 
@@ -94,10 +91,13 @@ public class AccountServiceTest {
         Account testAccount = new Account("Oleg", "Oleg", null, BigDecimal.valueOf(500_000));
         Account updatedAccount = new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(testAccount);
-        when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
+        when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
-        accountService.updateAccountInfo("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23));
+        AccountUpdateResponse response = accountService.updateAccountInfo("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23));
 
+        assertEquals(updatedAccount.getLogin(), response.login());
+        assertEquals(updatedAccount.getFullName(), response.fullName());
+        assertEquals(updatedAccount.getBirthdate(), response.birthdate());
         verify(accountRepository).save(updatedAccount);
         String notificationMessage =
                 String.format("Account details updated: full name -> Oleg Tarasov, birth date -> %s", LocalDate.of(1997, 3, 23));
@@ -118,7 +118,7 @@ public class AccountServiceTest {
     public void depositMoneyTest() {
         Account account = new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(account);
-        when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
+        when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
         BalanceResponse balanceResponse = accountService.updateAccountBalance("Oleg", Action.PUT, BigDecimal.valueOf(1000));
 
@@ -134,7 +134,7 @@ public class AccountServiceTest {
     public void withdrawMoneyTest() {
         Account account = new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(account);
-        when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
+        when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
         BalanceResponse balanceResponse = accountService.updateAccountBalance("Oleg", Action.GET, BigDecimal.valueOf(1000));
 
@@ -173,7 +173,7 @@ public class AccountServiceTest {
         Account recipient = new Account("Trakand", "Venera Trakand", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(sender);
         when(accountRepository.findByLogin("Trakand")).thenReturn(recipient);
-        when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
+        when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
         BalanceResponse balanceResponse = accountService.transferMoney("Oleg", "Trakand", BigDecimal.valueOf(100_000));
 

@@ -1,6 +1,8 @@
 plugins {
     id("java")
     id("org.springframework.boot")
+    id("org.springframework.cloud.contract") version "5.0.1"
+    id("maven-publish")
 }
 
 dependencies {
@@ -13,11 +15,32 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 
     implementation("org.springframework.cloud:spring-cloud-starter-config")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+    testImplementation("com.fasterxml.jackson.core:jackson-core")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind")
+    testImplementation("io.rest-assured:spring-mock-mvc:6.0.0")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
+
+contracts {
+    baseClassForTests.set(
+        "com.tarasov.bank.transfer.contract.BaseTransferContractTest"
+    )
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            artifact(tasks.named("verifierStubsJar"))
+        }
+    }
+}
+
 
 tasks.test {
     useJUnitPlatform()

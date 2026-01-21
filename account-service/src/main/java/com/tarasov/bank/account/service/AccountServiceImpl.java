@@ -1,11 +1,8 @@
 package com.tarasov.bank.account.service;
 
 import com.tarasov.bank.account.client.NotificationServiceClient;
-import com.tarasov.bank.account.model.dto.Action;
-import com.tarasov.bank.account.model.dto.BalanceResponse;
-import com.tarasov.bank.account.model.dto.NotificationRequest;
+import com.tarasov.bank.account.model.dto.*;
 import com.tarasov.bank.account.model.Account;
-import com.tarasov.bank.account.model.dto.AccountResponse;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
 import com.tarasov.bank.account.repository.AccountRepository;
@@ -46,19 +43,20 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void updateAccountInfo(String login, String fullName, LocalDate birthdate) {
+    public AccountUpdateResponse updateAccountInfo(String login, String fullName, LocalDate birthdate) {
         Account account = accountRepository.findByLogin(login);
         if (account == null) {
             throw new AccountNotFoundException();
         }
         account.setFullName(fullName);
         account.setBirthdate(birthdate);
-        accountRepository.save(account);
+        account = accountRepository.save(account);
 
         String notificationMessage =
                 String.format("Account details updated: full name -> %s, birth date -> %s",
                         fullName, birthdate);
         notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
+        return new AccountUpdateResponse(account.getLogin(), account.getFullName(), account.getBirthdate());
     }
 
     @Override
