@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 
@@ -28,6 +29,9 @@ public class Account {
 
     @Column(nullable = false)
     BigDecimal balance;
+
+    @Version
+    Instant lastUpdated;
 
     public Account(String login, String fullName, LocalDate birthdate, BigDecimal balance) {
         this.login = login;
