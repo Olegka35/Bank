@@ -16,6 +16,9 @@ dependencies {
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.3.RELEASE")
 
     implementation("org.springframework.cloud:spring-cloud-starter-config")
+    implementation("org.springframework.cloud:spring-cloud-starter-consul-discovery")
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 tasks.test {

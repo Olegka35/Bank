@@ -1,7 +1,13 @@
 spring:
+  application:
+    name: config-server
   cloud:
     config:
       server:
         git:
           uri: ${CONFIG_REPO}
           refresh-rate: 60
+    consul:
+      host: ${CONSUL_HOST}
+      discovery:
+        service-name: config-server

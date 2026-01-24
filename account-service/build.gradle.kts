@@ -19,6 +19,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 
     implementation("org.springframework.cloud:spring-cloud-starter-config")
+    implementation("org.springframework.cloud:spring-cloud-starter-consul-discovery")
     testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
     testImplementation("com.fasterxml.jackson.core:jackson-core")
     testImplementation("com.fasterxml.jackson.core:jackson-databind")

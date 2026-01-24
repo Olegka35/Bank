@@ -4,7 +4,6 @@ package com.tarasov.bank.cash.client;
 import com.tarasov.bank.cash.dto.NotificationRequest;
 import com.tarasov.bank.common.client.AbstractServiceClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.stereotype.Component;
 
 
@@ -12,9 +11,8 @@ import org.springframework.stereotype.Component;
 public class NotificationServiceClient extends AbstractServiceClient {
 
     public NotificationServiceClient(@Value("${notification-service.url}") String notificationServiceUrl,
-                                     @Value("${spring.application.name}") String serviceRegistrationId,
-                                     OAuth2AuthorizedClientManager authorizedClientManager) {
-        super(notificationServiceUrl, serviceRegistrationId, authorizedClientManager);
+                                     @Value("${spring.application.name}") String serviceRegistrationId) {
+        super(notificationServiceUrl, serviceRegistrationId);
     }
 
     public void send(NotificationRequest notificationRequest) {

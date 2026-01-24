@@ -28,6 +28,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) {
          http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(Customizer.withDefaults())

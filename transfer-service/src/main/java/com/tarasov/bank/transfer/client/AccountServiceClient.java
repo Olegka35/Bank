@@ -2,7 +2,6 @@ package com.tarasov.bank.transfer.client;
 
 import com.tarasov.bank.common.client.AbstractServiceClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.stereotype.Component;
 
 
@@ -10,8 +9,7 @@ import org.springframework.stereotype.Component;
 public class AccountServiceClient extends AbstractServiceClient {
 
     public AccountServiceClient(@Value("${account-service.url}") String accountServiceUrl,
-                                @Value("${spring.application.name}") String serviceRegistrationId,
-                                OAuth2AuthorizedClientManager authorizedClientManager) {
-        super(accountServiceUrl, serviceRegistrationId, authorizedClientManager);
+                                @Value("${spring.application.name}") String serviceRegistrationId) {
+        super(accountServiceUrl, serviceRegistrationId);
     }
 }

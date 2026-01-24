@@ -1,21 +1,33 @@
 package com.tarasov.bank.common.client;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.web.client.RestClient;
 
 public abstract class AbstractServiceClient {
 
-    private final RestClient restClient;
-    private final OAuth2AuthorizedClientManager authorizedClientManager;
+    private RestClient restClient;
     private final String serviceRegistrationId;
+    private final String serviceUrl;
+
+    @Autowired
+    private OAuth2AuthorizedClientManager authorizedClientManager;
+
+    @Autowired
+    private RestClient.Builder lbRestClientBuilder;
 
     public AbstractServiceClient(String serviceUrl,
-                                 String serviceRegistrationId,
-                                 OAuth2AuthorizedClientManager authorizedClientManager) {
-        this.authorizedClientManager = authorizedClientManager;
+                                 String serviceRegistrationId) {
+        this.serviceUrl = serviceUrl;
         this.serviceRegistrationId = serviceRegistrationId;
-        this.restClient = RestClient.builder()
+
+    }
+
+    @PostConstruct
+    public void init() {
+        this.restClient = lbRestClientBuilder
                 .baseUrl(serviceUrl)
                 .build();
     }
