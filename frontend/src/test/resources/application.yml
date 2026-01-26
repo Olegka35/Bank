@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: frontend-ui
+  config:
+    import: ""
+  cloud:
+    config:
+      enabled: false

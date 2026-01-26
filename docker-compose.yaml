@@ -1,0 +1,202 @@
+services:
+  consul:
+    image: hashicorp/consul:1.22.3
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: agent -dev -client=0.0.0.0
+
+  account-database:
+    container_name: account-database
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${ACCOUNT_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ACCOUNT_DB_PASSWORD}
+      POSTGRES_DB: bank
+    ports:
+      - "5435:5432"
+    restart: unless-stopped
+    volumes:
+      - account_data:/var/lib/postgresql
+
+  authentication-server-database:
+    container_name: authentication-server-database
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${AUTH_DB_USERNAME}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+      POSTGRES_DB: keycloak
+    restart: unless-stopped
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+
+  authentication-server:
+    image: keycloak/keycloak:26.4
+    container_name: authentication-server-keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://authentication-server-database:5432/keycloak
+      KC_DB_USERNAME: ${AUTH_DB_USERNAME}
+      KC_DB_PASSWORD: ${AUTH_DB_PASSWORD}
+      KC_HOSTNAME: ${AUTH_SERVER_HOST}
+      KC_HOSTNAME_PORT: ${AUTH_SERVER_PORT}
+      KC_HOSTNAME_STRICT: false
+    ports:
+      - "8090:8080"
+      - "9000:9000"
+    depends_on:
+      - authentication-server-database
+    command:
+      - start-dev
+      - --health-enabled=true
+    healthcheck:
+      test: ['CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:9000/health/live']
+      start_period: 15s
+      interval: 5s
+      retries: 10
+      timeout: 5s
+
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    environment:
+      CONSUL_HOST: consul
+      CONFIG_REPO: https://github.com/Olegka35/bank-config
+    ports:
+      - "8888:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/actuator/health/readiness || exit 1"]
+      interval: 2s
+      retries: 10
+      start_period: 5s
+
+  api-gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "8070:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      CONSUL_HOST: consul
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      ACCOUNT_SERVICE_URL: lb://account-service
+      CASH_SERVICE_URL: lb://cash-service
+      TRANSFER_SERVICE_URL: lb://transfer-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: front-ui-app
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      CONSUL_HOST: consul
+      FRONT_UI_URL: http://localhost:8080
+      BANK_FRONT_UI_SECRET: ${BANK_FRONT_UI_SECRET}
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      API_GATEWAY_URL: http://api-gateway
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  account-service:
+    build: ./account-service
+    container_name: account-service
+    ports:
+      - "8081:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      CONSUL_HOST: consul
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      ACCOUNT_DB_URL: jdbc:postgresql://account-database:5432/bank
+      ACCOUNT_DB_USERNAME: ${ACCOUNT_DB_USERNAME}
+      ACCOUNT_DB_PASSWORD: ${ACCOUNT_DB_PASSWORD}
+      ACCOUNT_SERVICE_SECRET: ${ACCOUNT_SERVICE_SECRET}
+      NOTIFICATION_SERVICE_URL: http://notification-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  cash-service:
+    build: ./cash-service
+    container_name: cash-service
+    ports:
+      - "8082:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      CONSUL_HOST: consul
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      CASH_SERVICE_SECRET: ${CASH_SERVICE_SECRET}
+      ACCOUNT_SERVICE_URL: http://account-service
+      NOTIFICATION_SERVICE_URL: http://notification-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  transfer-service:
+    build: ./transfer-service
+    container_name: transfer-service
+    ports:
+      - "8083:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      CONSUL_HOST: consul
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+      TRANSFER_SERVICE_SECRET: ${TRANSFER_SERVICE_SECRET}
+      ACCOUNT_SERVICE_URL: http://account-service
+      NOTIFICATION_SERVICE_URL: http://notification-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8084:8080"
+    extra_hosts:
+      - "${AUTH_SERVER_HOST}:host-gateway"
+    environment:
+      CONSUL_HOST: consul
+      SPRING_PROFILES_ACTIVE: develop
+      CONFIG_SERVER_URL: http://config-server:8080
+      AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      authentication-server:
+        condition: service_healthy
+
+volumes:
+  keycloak_data:
+  account_data:

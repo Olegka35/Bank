@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: transfer-service
+  config:
+    import: configserver:${CONFIG_SERVER_URL}
+  cloud:
+    config:
+      label: main
