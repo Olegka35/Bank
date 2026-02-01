@@ -1,0 +1,9 @@
+keycloak:
+  adminUser: admin
+  adminPassword: admin
+  adminRealm: bank
+
+frontend-ui:
+  replicaCount: 2
+  image:
+    tag: "1.0.0"
