@@ -1,0 +1,11 @@
+keycloak:
+  image: quay.io/keycloak/keycloak:26.4
+  adminUser: admin
+  adminPassword: admin
+
+postgres:
+  image: postgres:18
+  db: keycloak
+  user: keycloak
+  password: keycloakpass
+  storage: 1Gi

@@ -3,9 +3,9 @@ name: bank-chart
 description: An umbrella Bank application chart containing sub charts for microservices
 version: 0.1.0
 dependencies:
-  - name: keycloak
-    version: 25.2.0
-    repository: https://charts.bitnami.com/bitnami
+  - name: auth-server
+    version: "1.0.0"
+    repository: "file://charts/auth-server"
   - name: frontend-ui
     version: "1.0.0"
     repository: "file://charts/frontend-ui"
