@@ -105,7 +105,7 @@ services:
       FRONT_UI_URL: http://localhost:8080
       BANK_FRONT_UI_SECRET: ${BANK_FRONT_UI_SECRET}
       SPRING_PROFILES_ACTIVE: develop
-      CONFIG_SERVER_URL: http://config-server:8080
+      CONFIG_LOCATION: configserver:http://config-server:8080
       AUTH_SERVER_URL: http://${AUTH_SERVER_HOST}:${AUTH_SERVER_PORT}
       API_GATEWAY_URL: http://api-gateway
     depends_on:
