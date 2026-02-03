@@ -6,6 +6,7 @@ image:
 
 authServerUrl: "http://keycloak"
 notificationServiceUrl: "http://notification-service"
+accountServiceAuthSecret: "temp_secret"
 
 postgres:
   image: postgres:18

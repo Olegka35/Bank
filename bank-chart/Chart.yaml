@@ -4,22 +4,22 @@ description: An umbrella Bank application chart containing sub charts for micros
 version: 0.1.0
 dependencies:
   - name: auth-server
-    version: "1.0.0"
+    version: "1.0.1"
     repository: "file://charts/auth-server"
   - name: frontend-ui
-    version: "1.0.1"
+    version: "1.0.2"
     repository: "file://charts/frontend-ui"
   - name: api-gateway
     version: "1.0.0"
     repository: "file://charts/api-gateway"
   - name: account-service
-    version: "1.0.1"
+    version: "1.0.2"
     repository: "file://charts/account-service"
   - name: cash-service
-    version: "1.0.1"
+    version: "1.0.2"
     repository: "file://charts/cash-service"
   - name: transfer-service
-    version: "1.0.1"
+    version: "1.0.2"
     repository: "file://charts/transfer-service"
   - name: notification-service
     version: "1.0.1"

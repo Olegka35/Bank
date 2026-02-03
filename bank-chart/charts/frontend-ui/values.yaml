@@ -2,8 +2,9 @@ replicaCount: 2
 
 hostUrl: "http://localhost:30081"
 externalPort: 30081
-authServerUrl: "http://keycloak"
+authServerUrl: "http://auth.server"
 apiGatewayUrl: "http://api-gw.local"
+frontendUiAuthSecret: "temp_secret"
 
 image:
   repository: oleg1997/bank-frontend
