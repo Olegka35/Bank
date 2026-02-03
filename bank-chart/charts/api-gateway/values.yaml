@@ -1,0 +1,16 @@
+ingress:
+  enabled: true
+  host: api-gw.local
+
+  services:
+    - name: account-service
+      path: /account
+      port: 8080
+
+    - name: cash-service
+      path: /cash
+      port: 8080
+
+    - name: transfer-service
+      path: /transfer
+      port: 8080

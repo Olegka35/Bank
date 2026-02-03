@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "bank-chart.fullname" . }}
-  labels:
-    {{- include "bank-chart.labels" . | nindent 4 }}
+  name: {{ .Chart.Name }}
 spec:
-  type: {{ .Values.service.type }}
+  type: NodePort
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 80
+      nodePort: {{ .Values.externalPort }}
       targetPort: http
       protocol: TCP
       name: http
   selector:
-    {{- include "bank-chart.selectorLabels" . | nindent 4 }}
+    app: {{ .Chart.Name }}

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+data:
+  application.yml: |
+    spring:
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: ${AUTH_SERVER_URL}/realms/bank
+          client:
+            provider:
+              keycloak:
+                issuer-uri: ${AUTH_SERVER_URL}/realms/bank
+            registration:
+              cash-service:
+                provider: keycloak
+                authorization-grant-type: client_credentials
+                client-id: cash-service
+                client-secret: ${CASH_SERVICE_SECRET}
+
+    notification-service:
+      url: ${NOTIFICATION_SERVICE_URL}
+
+    account-service:
+      url: ${ACCOUNT_SERVICE_URL}

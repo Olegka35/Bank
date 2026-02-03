@@ -9,3 +9,18 @@ dependencies:
   - name: frontend-ui
     version: "1.0.0"
     repository: "file://charts/frontend-ui"
+  - name: api-gateway
+    version: "1.0.0"
+    repository: "file://charts/api-gateway"
+  - name: account-service
+    version: "1.0.0"
+    repository: "file://charts/account-service"
+  - name: cash-service
+    version: "1.0.0"
+    repository: "file://charts/cash-service"
+  - name: transfer-service
+    version: "1.0.0"
+    repository: "file://charts/transfer-service"
+  - name: notification-service
+    version: "1.0.0"
+    repository: "file://charts/notification-service"

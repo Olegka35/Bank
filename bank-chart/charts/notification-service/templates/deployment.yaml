@@ -26,17 +26,8 @@ spec:
               value: "false"
             - name: SPRING_CLOUD_CONSUL_ENABLED
               value: "false"
-            - name: FRONT_UI_URL
-              value: {{ .Values.hostUrl }}
-            - name: BANK_FRONT_UI_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Chart.Name }}-secret
-                  key: BANK_FRONT_UI_SECRET
             - name: AUTH_SERVER_URL
               value: {{ .Values.authServerUrl }}
-            - name: API_GATEWAY_URL
-              value: {{ .Values.apiGatewayUrl }}
           volumeMounts:
             - name: config
               mountPath: /config

@@ -26,17 +26,24 @@ spec:
               value: "false"
             - name: SPRING_CLOUD_CONSUL_ENABLED
               value: "false"
-            - name: FRONT_UI_URL
-              value: {{ .Values.hostUrl }}
-            - name: BANK_FRONT_UI_SECRET
+            - name: AUTH_SERVER_URL
+              value: {{ .Values.authServerUrl }}
+            - name: ACCOUNT_SERVICE_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-secret
-                  key: BANK_FRONT_UI_SECRET
-            - name: AUTH_SERVER_URL
-              value: {{ .Values.authServerUrl }}
-            - name: API_GATEWAY_URL
-              value: {{ .Values.apiGatewayUrl }}
+                  key: ACCOUNT_SERVICE_SECRET
+            - name: NOTIFICATION_SERVICE_URL
+              value: {{ .Values.notificationServiceUrl }}
+            - name: ACCOUNT_DB_URL
+              value: "jdbc:postgresql://account-service-db:5432/bank"
+            - name: ACCOUNT_DB_USERNAME
+              value: {{ .Values.postgres.user }}
+            - name: ACCOUNT_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: account-db-secret
+                  key: POSTGRES_PASSWORD
           volumeMounts:
             - name: config
               mountPath: /config

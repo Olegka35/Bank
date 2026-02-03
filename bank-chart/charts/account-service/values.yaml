@@ -1,13 +1,18 @@
 replicaCount: 2
 
-hostUrl: "http://localhost:30081"
-externalPort: 30081
-authServerUrl: "http://keycloak"
-apiGatewayUrl: "http://api-gw.local"
-
 image:
-  repository: oleg1997/bank-frontend
-  tag: "1.0.1"
+  repository: oleg1997/bank-account-service
+  tag: "1.0.0"
+
+authServerUrl: "http://keycloak"
+notificationServiceUrl: "http://notification-service"
+
+postgres:
+  image: postgres:18
+  db: bank
+  user: postgres
+  password: postgres
+  storage: 1Gi
 
 startupProbe:
   initialDelaySeconds: 20
