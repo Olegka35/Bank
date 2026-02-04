@@ -7,7 +7,7 @@ dependencies:
     version: "1.0.1"
     repository: "file://charts/auth-server"
   - name: frontend-ui
-    version: "1.0.2"
+    version: "1.0.3"
     repository: "file://charts/frontend-ui"
   - name: api-gateway
     version: "1.0.0"

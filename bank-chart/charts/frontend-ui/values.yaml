@@ -2,7 +2,7 @@ replicaCount: 2
 
 hostUrl: "http://localhost:30081"
 externalPort: 30081
-authServerUrl: "http://auth.server"
+authServerUrl: "http://keycloak.default.svc.cluster.local"
 apiGatewayUrl: "http://api-gw.local"
 frontendUiAuthSecret: "temp_secret"
 
