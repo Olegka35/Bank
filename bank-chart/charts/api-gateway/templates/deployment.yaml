@@ -22,23 +22,18 @@ spec:
           env:
             - name: CONFIG_LOCATION
               value: "optional:file:/config/application.yml"
-            - name: SPRING_CLOUD_KUBERNETES_DISCOVERY_ENABLED
-              value: "true"
             - name: SPRING_CLOUD_CONFIG_ENABLED
               value: "false"
             - name: SPRING_CLOUD_CONSUL_ENABLED
               value: "false"
-            - name: FRONT_UI_URL
-              value: {{ .Values.hostUrl }}
-            - name: BANK_FRONT_UI_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Chart.Name }}-secret
-                  key: BANK_FRONT_UI_SECRET
             - name: AUTH_SERVER_URL
               value: {{ .Values.authServerUrl }}
-            - name: API_GATEWAY_URL
-              value: {{ .Values.apiGatewayUrl }}
+            - name: ACCOUNT_SERVICE_URL
+              value: {{ .Values.accountServiceUrl }}
+            - name: CASH_SERVICE_URL
+              value: {{ .Values.cashServiceUrl }}
+            - name: TRANSFER_SERVICE_URL
+              value: {{ .Values.transferServiceUrl }}
           volumeMounts:
             - name: config
               mountPath: /config

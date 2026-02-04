@@ -3,12 +3,12 @@ replicaCount: 2
 hostUrl: "http://localhost:30081"
 externalPort: 30081
 authServerUrl: "http://keycloak.default.svc.cluster.local"
-apiGatewayUrl: "http://api-gw.local"
+apiGatewayUrl: "http://api-gateway:8080"
 frontendUiAuthSecret: "temp_secret"
 
 image:
   repository: oleg1997/bank-frontend
-  tag: "1.0.1"
+  tag: "1.0.3"
 
 startupProbe:
   initialDelaySeconds: 20
