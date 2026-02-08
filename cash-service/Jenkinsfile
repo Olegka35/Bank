@@ -6,37 +6,72 @@ pipeline {
     }
 
     environment {
-        COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         svc = 'cash-service'
+        DOCKER_REPO = 'oleg1997'
     }
 
     stages {
 
-        stage('checkout') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('build') {
-            steps {
-                sh "./gradlew clean build :$svc"
-            }
-        }
-
-        stage('tag') {
+        stage('Set commit hash') {
             steps {
                 script {
-                      docker build -t oleg1997/$svc:$COMMIT_HASH $svc
-                      docker push oleg1997/$svc:$COMMIT_HASH
+                    env.COMMIT_HASH = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
                 }
             }
         }
 
-        stage('deploy') {
+        stage('Build') {
             steps {
-                sh "helm upgrade bank-chart ./bank-chart --install $svc --namespace $ENV"
+                sh "./gradlew clean build :${svc}"
             }
+        }
+
+        stage('Docker build & push') {
+            steps {
+                script {
+                    sh """
+                      docker build -t ${DOCKER_REPO}/${svc}:${COMMIT_HASH} ${svc}
+                      docker push ${DOCKER_REPO}/${svc}:${COMMIT_HASH}
+                    """
+                }
+            }
+        }
+
+        stage('Prod approval') {
+            when {
+                expression { params.ENV == 'prod' }
+            }
+            steps {
+                input message: 'Deploy to PROD environment?', ok: 'Yes, deploy'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh """
+                  helm upgrade --install ${svc} ./bank-chart \
+                    --namespace ${params.ENV} \
+                    --set image.tag=${COMMIT_HASH}
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment to ${params.ENV} successful"
+        }
+        failure {
+            echo "Pipeline failed"
         }
     }
 }

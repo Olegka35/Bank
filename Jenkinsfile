@@ -6,41 +6,74 @@ pipeline {
     }
 
     environment {
-        COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+        DOCKER_REPO = 'oleg1997'
         SERVICES = "account-service cash-service transfer-service frontend gateway notification-service"
     }
 
     stages {
 
-        stage('checkout') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('build') {
+        stage('Set commit hash') {
+            steps {
+                script {
+                    env.COMMIT_HASH = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+
+        stage('Build') {
             steps {
                 sh "./gradlew clean build"
             }
         }
 
-        stage('tag') {
+        stage('Docker build & push') {
             steps {
                 script {
                     SERVICES.split().each { svc ->
                         sh """
-                          docker build -t oleg1997/$svc:$COMMIT_HASH $svc
-                          docker push oleg1997/$svc:$COMMIT_HASH
+                          docker build -t ${DOCKER_REPO}/${svc}:${COMMIT_HASH} ${svc}
+                          docker push ${DOCKER_REPO}/${svc}:${COMMIT_HASH}
                         """
                     }
                 }
             }
         }
 
-        stage('deploy') {
-            steps {
-                sh "helm upgrade bank-chart ./bank-chart --install --namespace $ENV"
+        stage('Prod approval') {
+            when {
+                expression { params.ENV == 'prod' }
             }
+            steps {
+                input message: 'Deploy to PROD environment?', ok: 'Yes, deploy'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh """
+                  helm upgrade --install bank-chart ./bank-chart \
+                    --namespace ${params.ENV} \
+                    --set image.tag=${COMMIT_HASH}
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment to ${params.ENV} completed successfully"
+        }
+        failure {
+            echo "Pipeline failed"
         }
     }
 }
