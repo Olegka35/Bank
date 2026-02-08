@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'ENV', choices: ['test', 'prod'], description: 'Environment')
+    }
+
+    environment {
+        COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+        svc = 'notification-service'
+    }
+
+    stages {
+
+        stage('checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('build') {
+            steps {
+                sh "./gradlew clean build :$svc"
+            }
+        }
+
+        stage('tag') {
+            steps {
+                script {
+                      docker build -t oleg1997/$svc:$COMMIT_HASH $svc
+                      docker push oleg1997/$svc:$COMMIT_HASH
+                }
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                sh "helm upgrade bank-chart ./bank-chart --install $svc bank-chart --namespace $ENV"
+            }
+        }
+    }
+}
