@@ -35,7 +35,7 @@ pipeline {
 
         stage('deploy') {
             steps {
-                sh "helm upgrade bank-chart ./bank-chart --install $svc bank-chart --namespace $ENV"
+                sh "helm upgrade bank-chart ./bank-chart --install $svc --namespace $ENV"
             }
         }
     }
