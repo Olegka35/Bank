@@ -39,7 +39,7 @@ TRANSFER_SERVICE_SECRET={SECRET}
 
 ## 4. Start application
 
-There are 3 launch options: from IDE, local launch, docker launch.
+There are 4 launch options: from IDE, local launch, docker launch, k8s via Helm chart.
 
 1. Start from IDE (specify environment variables inside IDE)
 
@@ -50,3 +50,8 @@ There are 3 launch options: from IDE, local launch, docker launch.
 - Launch Docker locally
 - Execute ```docker compose up --build``` to start Docker containers.
 - No need to specify ports / profiles manually when using Docker compose. Ports will be set automatically.
+
+4. Launch in Kubernetes using Helm:
+```
+helm install bank-chart ./bank-chart
+```

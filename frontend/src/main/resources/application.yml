@@ -2,7 +2,7 @@ spring:
   application:
     name: frontend
   config:
-    import: configserver:${CONFIG_SERVER_URL}
+    import: ${CONFIG_LOCATION}
   cloud:
     config:
       label: main

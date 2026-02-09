@@ -1,0 +1,6 @@
+apiVersion: v2
+name: auth-server
+description: Authorization server containing of keycloak and postgres
+type: application
+version: 1.0.1
+appVersion: "26.4"

@@ -1,0 +1,26 @@
+apiVersion: v2
+name: bank-chart
+description: An umbrella Bank application chart containing sub charts for microservices
+version: 0.1.1
+dependencies:
+  - name: auth-server
+    version: "1.0.1"
+    repository: "file://charts/auth-server"
+  - name: frontend-ui
+    version: "1.0.4"
+    repository: "file://charts/frontend-ui"
+  - name: api-gateway
+    version: "1.0.3"
+    repository: "file://charts/api-gateway"
+  - name: account-service
+    version: "1.0.3"
+    repository: "file://charts/account-service"
+  - name: cash-service
+    version: "1.0.3"
+    repository: "file://charts/cash-service"
+  - name: transfer-service
+    version: "1.0.3"
+    repository: "file://charts/transfer-service"
+  - name: notification-service
+    version: "1.0.1"
+    repository: "file://charts/notification-service"

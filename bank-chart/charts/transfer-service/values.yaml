@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  repository: oleg1997/bank-transfer-service
+  tag: "1.0.1"
+
+authServerUrl: "http://keycloak.default.svc.cluster.local"
+accountServiceUrl: "http://account-service:8080"
+notificationServiceUrl: "http://notification-service:8080"
+transferServiceAuthSecret: "temp_secret"
+
+startupProbe:
+  initialDelaySeconds: 20
+  failureThreshold: 10
+  httpGet:
+    path: /actuator/health
+    port: http
+livenessProbe:
+  initialDelaySeconds: 20
+  failureThreshold: 10
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+readinessProbe:
+  initialDelaySeconds: 20
+  failureThreshold: 10
+  httpGet:
+    path: /actuator/health/readiness
+    port: http

@@ -1,0 +1,35 @@
+replicaCount: 2
+
+image:
+  repository: oleg1997/bank-account-service
+  tag: "1.0.1"
+
+authServerUrl: "http://keycloak.default.svc.cluster.local"
+notificationServiceUrl: "http://notification-service:8080"
+accountServiceAuthSecret: "temp_secret"
+
+postgres:
+  image: postgres:18
+  db: bank
+  user: postgres
+  password: postgres
+  storage: 1Gi
+
+startupProbe:
+  initialDelaySeconds: 20
+  failureThreshold: 10
+  httpGet:
+    path: /actuator/health
+    port: http
+livenessProbe:
+  initialDelaySeconds: 20
+  failureThreshold: 10
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+readinessProbe:
+  initialDelaySeconds: 20
+  failureThreshold: 10
+  httpGet:
+    path: /actuator/health/readiness
+    port: http

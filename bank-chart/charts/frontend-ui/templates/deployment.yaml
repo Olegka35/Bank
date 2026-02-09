@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: CONFIG_LOCATION
+              value: "optional:file:/config/application.yml"
+            - name: SPRING_CLOUD_KUBERNETES_DISCOVERY_ENABLED
+              value: "true"
+            - name: SPRING_CLOUD_CONFIG_ENABLED
+              value: "false"
+            - name: SPRING_CLOUD_CONSUL_ENABLED
+              value: "false"
+            - name: FRONT_UI_URL
+              value: {{ .Values.hostUrl }}
+            - name: BANK_FRONT_UI_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: BANK_FRONT_UI_SECRET
+            - name: AUTH_SERVER_URL
+              value: {{ .Values.authServerUrl }}
+            - name: API_GATEWAY_URL
+              value: {{ .Values.apiGatewayUrl }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Chart.Name }}-config

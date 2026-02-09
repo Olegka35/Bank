@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: account-service-db
+spec:
+  serviceName: account-service-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account-service-db
+  template:
+    metadata:
+      labels:
+        app: account-service-db
+    spec:
+      containers:
+        - name: account-service-db
+          image: "{{ .Values.postgres.image }}"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: account-db-secret
+          volumeMounts:
+            - name: account-service-postgres-data
+              mountPath: /var/lib/postgresql
+          livenessProbe:
+            exec:
+              command: [ "pg_isready", "-U", "{{ .Values.postgres.user }}" ]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: [ "pg_isready", "-U", "{{ .Values.postgres.user }}" ]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: account-service-postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: "{{ .Values.postgres.storage }}"

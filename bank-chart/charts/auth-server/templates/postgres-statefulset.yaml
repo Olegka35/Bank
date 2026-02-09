@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: auth-service-db
+spec:
+  serviceName: auth-server-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service-db
+  template:
+    metadata:
+      labels:
+        app: auth-service-db
+    spec:
+      containers:
+        - name: auth-service-db
+          image: "{{ .Values.postgres.image }}"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: auth-server-postgres-secret
+          volumeMounts:
+            - name: keycloak-postgres-data
+              mountPath: /var/lib/postgresql
+          livenessProbe:
+            exec:
+              command: [ "pg_isready", "-U", "{{ .Values.postgres.user }}" ]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: [ "pg_isready", "-U", "{{ .Values.postgres.user }}" ]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: keycloak-postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: "{{ .Values.postgres.storage }}"
