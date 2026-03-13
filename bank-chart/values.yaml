@@ -16,3 +16,7 @@ frontend-ui:
 global:
   security:
     allowInsecureImages: true
+
+kafka:
+  broker:
+    replicaCount: 2

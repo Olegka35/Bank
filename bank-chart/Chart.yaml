@@ -24,3 +24,6 @@ dependencies:
   - name: notification-service
     version: "1.0.1"
     repository: "file://charts/notification-service"
+  - name: kafka
+    version: "18.0.1"
+    repository: "https://helm-charts.itboon.top/kafka"
