@@ -24,6 +24,7 @@ dependencies {
     testImplementation("com.fasterxml.jackson.core:jackson-core")
     testImplementation("com.fasterxml.jackson.core:jackson-databind")
     testImplementation("io.rest-assured:spring-mock-mvc:6.0.0")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
