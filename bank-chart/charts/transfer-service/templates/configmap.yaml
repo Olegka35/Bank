@@ -25,8 +25,11 @@ data:
         producer:
           key-serializer: org.apache.kafka.common.serialization.StringSerializer
           value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
-    notification-service:
-      url: ${NOTIFICATION_SERVICE_URL}
+          retries: {{ .Values.global.notifications.retry.amount }}
+          acks: all
+          properties:
+            enable.idempotence: true
+            retry.backoff.ms: {{ .Values.global.notifications.retry.backoff }}
 
     account-service:
       url: ${ACCOUNT_SERVICE_URL}
