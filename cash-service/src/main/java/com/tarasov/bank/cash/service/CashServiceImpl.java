@@ -1,11 +1,11 @@
 package com.tarasov.bank.cash.service;
 
 import com.tarasov.bank.cash.client.AccountServiceClient;
-import com.tarasov.bank.cash.client.NotificationServiceClient;
 import com.tarasov.bank.cash.dto.Action;
 import com.tarasov.bank.cash.dto.BalanceResponse;
 import com.tarasov.bank.cash.dto.BalanceUpdateRequest;
 import com.tarasov.bank.cash.dto.NotificationRequest;
+import com.tarasov.bank.cash.producer.KafkaNotificationProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class CashServiceImpl implements CashService {
 
     private final AccountServiceClient accountServiceClient;
-    private final NotificationServiceClient notificationServiceClient;
+    private final KafkaNotificationProducer notificationProducer;
 
     @Override
     public BalanceResponse updateBalance(String login, BalanceUpdateRequest balanceUpdateRequest) {
@@ -28,7 +28,7 @@ public class CashServiceImpl implements CashService {
                         balanceUpdateRequest.action().equals(Action.GET) ? "-" : "+",
                         balanceUpdateRequest.value(),
                         balanceResponse.balance());
-        notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
+        notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
         return balanceResponse;
     }
 }

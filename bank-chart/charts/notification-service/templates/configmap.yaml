@@ -10,6 +10,16 @@ data:
           resourceserver:
             jwt:
               issuer-uri: ${AUTH_SERVER_URL}/realms/bank
+      kafka:
+        bootstrap-servers: bank-chart-kafka-broker-0.bank-chart-kafka-headless:9092,bank-chart-kafka-broker-1.bank-chart-kafka-headless:9092
+        consumer:
+          group-id: notification-service
+          key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+          value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+          properties:
+            spring.json.trusted.packages: "com.tarasov.bank.*"
+            spring.json.use.type.headers: false
+            spring.json.value.default.type: com.tarasov.bank.notification.dto.NotificationRequest
 
     logging:
       level:

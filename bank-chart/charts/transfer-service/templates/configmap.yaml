@@ -20,7 +20,11 @@ data:
                 authorization-grant-type: client_credentials
                 client-id: transfer-service
                 client-secret: ${TRANSFER_SERVICE_SECRET}
-
+      kafka:
+        bootstrap-servers: bank-chart-kafka-broker-0.bank-chart-kafka-headless:9092,bank-chart-kafka-broker-1.bank-chart-kafka-headless:9092
+        producer:
+          key-serializer: org.apache.kafka.common.serialization.StringSerializer
+          value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
     notification-service:
       url: ${NOTIFICATION_SERVICE_URL}
 

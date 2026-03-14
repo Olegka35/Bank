@@ -6,6 +6,7 @@ import com.tarasov.bank.account.model.dto.*;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
+import com.tarasov.bank.account.producer.KafkaNotificationProducer;
 import com.tarasov.bank.account.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ public class AccountServiceTest {
     private AccountRepository accountRepository;
 
     @Mock
-    private NotificationServiceClient notificationServiceClient;
+    private KafkaNotificationProducer notificationProducer;
 
     @Test
     public void canDetectAccountExistence() {
@@ -101,7 +102,7 @@ public class AccountServiceTest {
         verify(accountRepository).save(updatedAccount);
         String notificationMessage =
                 String.format("Account details updated: full name -> Oleg Tarasov, birth date -> %s", LocalDate.of(1997, 3, 23));
-        verify(notificationServiceClient).send(new NotificationRequest("Oleg", notificationMessage));
+        verify(notificationProducer).sendNotification(new NotificationRequest("Oleg", notificationMessage));
     }
 
     @Test

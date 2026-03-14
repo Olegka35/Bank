@@ -1,10 +1,10 @@
 package com.tarasov.bank.account.service;
 
-import com.tarasov.bank.account.client.NotificationServiceClient;
 import com.tarasov.bank.account.model.dto.*;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
+import com.tarasov.bank.account.producer.KafkaNotificationProducer;
 import com.tarasov.bank.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
-    private final NotificationServiceClient notificationServiceClient;
+    private final KafkaNotificationProducer notificationProducer;
 
     @Override
     public boolean existsByLogin(String login) {
@@ -55,7 +55,7 @@ public class AccountServiceImpl implements AccountService {
         String notificationMessage =
                 String.format("Account details updated: full name -> %s, birth date -> %s",
                         fullName, birthdate);
-        notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
+        notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
         return new AccountUpdateResponse(account.getLogin(), account.getFullName(), account.getBirthdate());
     }
 

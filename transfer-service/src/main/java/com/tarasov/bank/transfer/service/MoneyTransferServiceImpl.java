@@ -1,10 +1,10 @@
 package com.tarasov.bank.transfer.service;
 
 import com.tarasov.bank.transfer.client.AccountServiceClient;
-import com.tarasov.bank.transfer.client.NotificationServiceClient;
 import com.tarasov.bank.transfer.dto.BalanceResponse;
 import com.tarasov.bank.transfer.dto.MoneyTransferRequest;
 import com.tarasov.bank.transfer.dto.NotificationRequest;
+import com.tarasov.bank.transfer.producer.KafkaNotificationProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     private final AccountServiceClient accountServiceClient;
-    private final NotificationServiceClient notificationServiceClient;
+    private final KafkaNotificationProducer notificationProducer;
 
     @Override
     public BalanceResponse transferMoney(String login, MoneyTransferRequest moneyTransferRequest) {
@@ -30,7 +30,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
                         moneyTransferRequest.value(),
                         moneyTransferRequest.login(),
                         balanceResponse.balance());
-        notificationServiceClient.send(new NotificationRequest(login, notificationMessage));
+        notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
         return balanceResponse;
     }
 }
