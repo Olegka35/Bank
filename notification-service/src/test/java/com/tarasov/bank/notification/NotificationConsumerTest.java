@@ -19,7 +19,6 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Duration;
@@ -84,6 +83,6 @@ public class NotificationConsumerTest {
         kafkaTemplate.send("transfer-notifications", "oleg", notification);
 
         verify(notificationProcessService, timeout(5000))
-                .processNotification(any());
+                .processNotification(notification);
     }
 }
