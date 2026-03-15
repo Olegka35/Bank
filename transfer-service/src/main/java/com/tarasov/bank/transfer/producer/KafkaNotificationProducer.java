@@ -18,6 +18,6 @@ public class KafkaNotificationProducer {
 
     public void sendNotification(NotificationRequest notificationRequest) {
         LOGGER.info("Notification sent to Kafka: {}",  notificationRequest);
-        kafkaTemplate.send("transer-notifications", notificationRequest.login(), notificationRequest);
+        kafkaTemplate.send("transfer-notifications", notificationRequest.login(), notificationRequest);
     }
 }

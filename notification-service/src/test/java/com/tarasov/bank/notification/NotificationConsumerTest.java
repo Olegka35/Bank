@@ -25,7 +25,7 @@ import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
 
 @SpringBootTest(properties = {"spring.config.import=optional:configserver:"})
 @Import(NoSecurityConfig.class)
-@EmbeddedKafka(topics = {"transer-notifications", "cash-notifications", "account-notifications"})
+@EmbeddedKafka(topics = {"transfer-notifications", "cash-notifications", "account-notifications"})
 public class NotificationConsumerTest {
 
     @Autowired
@@ -41,7 +41,7 @@ public class NotificationConsumerTest {
                 new StringDeserializer(),
                 new JacksonJsonDeserializer<>(NotificationRequest.class)
         ).createConsumer()) {
-            consumerForTest.subscribe(List.of("transer-notifications", "cash-notifications", "account-notifications"));
+            consumerForTest.subscribe(List.of("transfer-notifications", "cash-notifications", "account-notifications"));
 
             NotificationRequest notification = new NotificationRequest("oleg", "Test message");
             kafkaTemplate.send("cash-notifications", "oleg", notification);

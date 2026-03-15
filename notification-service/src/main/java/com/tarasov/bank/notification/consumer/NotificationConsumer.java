@@ -13,7 +13,7 @@ public class NotificationConsumer {
 
     private final NotificationProcessService notificationProcessService;
 
-    @KafkaListener(topics = { "transer-notifications", "cash-notifications", "account-notifications" },
+    @KafkaListener(topics = { "transfer-notifications", "cash-notifications", "account-notifications" },
             errorHandler = "notificationListenerErrorHandler")
     public void processNotification(@Payload NotificationRequest notificationRequest) {
         notificationProcessService.processNotification(notificationRequest);
