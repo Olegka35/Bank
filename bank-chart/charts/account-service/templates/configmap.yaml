@@ -26,5 +26,13 @@ data:
         password: ${ACCOUNT_DB_PASSWORD}
       jpa:
         show-sql: true
-    notification-service:
-      url: ${NOTIFICATION_SERVICE_URL}
+      kafka:
+        bootstrap-servers: bank-chart-kafka-broker-0.bank-chart-kafka-headless:9092,bank-chart-kafka-broker-1.bank-chart-kafka-headless:9092
+        producer:
+          key-serializer: org.apache.kafka.common.serialization.StringSerializer
+          value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+          retries: {{ .Values.global.notifications.retry.amount }}
+          acks: all
+          properties:
+            enable.idempotence: true
+            retry.backoff.ms: {{ .Values.global.notifications.retry.backoff }}
