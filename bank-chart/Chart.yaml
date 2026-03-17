@@ -27,3 +27,6 @@ dependencies:
   - name: kafka
     version: "18.0.1"
     repository: "https://helm-charts.itboon.top/kafka"
+  - name: zipkin
+    version: "0.4.0"
+    repository: "https://zipkin.io/zipkin-helm"
