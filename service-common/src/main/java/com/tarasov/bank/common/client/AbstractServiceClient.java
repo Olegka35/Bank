@@ -16,7 +16,7 @@ public abstract class AbstractServiceClient {
     private OAuth2AuthorizedClientManager authorizedClientManager;
 
     @Autowired
-    private RestClient.Builder lbRestClientBuilder;
+    private RestClient.Builder restClientBuilder;
 
     public AbstractServiceClient(String serviceUrl,
                                  String serviceRegistrationId) {
@@ -27,7 +27,7 @@ public abstract class AbstractServiceClient {
 
     @PostConstruct
     public void init() {
-        this.restClient = lbRestClientBuilder
+        this.restClient = restClientBuilder
                 .baseUrl(serviceUrl)
                 .build();
     }

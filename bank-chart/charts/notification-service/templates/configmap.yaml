@@ -24,3 +24,11 @@ data:
     logging:
       level:
         com.tarasov.bank.notification.service: INFO
+
+    management:
+      tracing:
+        export:
+          zipkin:
+            endpoint: {{ .Values.global.zipkin.endpoint }}
+        sampling:
+          probability: 1

@@ -33,3 +33,10 @@ data:
                     - Path=/transfer/**
                   filters:
                     - name: JwtTokenRelay
+    management:
+      tracing:
+        export:
+          zipkin:
+            endpoint: {{ .Values.global.zipkin.endpoint }}
+        sampling:
+          probability: 1

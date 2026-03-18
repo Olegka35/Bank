@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: oleg1997/bank-cash-service
-  tag: "1.0.2"
+  tag: "1.0.4"
 
 authServerUrl: "http://keycloak.default.svc.cluster.local"
 accountServiceUrl: "http://account-service:8080"

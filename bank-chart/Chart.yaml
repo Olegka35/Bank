@@ -7,22 +7,22 @@ dependencies:
     version: "1.0.1"
     repository: "file://charts/auth-server"
   - name: frontend-ui
-    version: "1.0.4"
+    version: "1.0.6"
     repository: "file://charts/frontend-ui"
   - name: api-gateway
-    version: "1.0.3"
+    version: "1.0.5"
     repository: "file://charts/api-gateway"
   - name: account-service
-    version: "1.0.3"
+    version: "1.0.5"
     repository: "file://charts/account-service"
   - name: cash-service
-    version: "1.0.3"
+    version: "1.0.5"
     repository: "file://charts/cash-service"
   - name: transfer-service
-    version: "1.0.3"
+    version: "1.0.5"
     repository: "file://charts/transfer-service"
   - name: notification-service
-    version: "1.0.1"
+    version: "1.0.3"
     repository: "file://charts/notification-service"
   - name: kafka
     version: "18.0.1"
