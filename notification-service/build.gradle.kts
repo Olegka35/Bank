@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":service-common"))
 
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    implementation("org.springframework.boot:spring-boot-starter-zipkin")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
@@ -27,8 +26,8 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-tracing-bridge-brave") // Трейсер Brave с мостом к нему
-    implementation("io.zipkin.reporter2:zipkin-reporter-brave") // Brave-репортер используется для отправки трасс
+    implementation("org.springframework.boot:spring-boot-starter-zipkin")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 }
 
 contracts {

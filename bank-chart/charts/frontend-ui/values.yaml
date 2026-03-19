@@ -8,7 +8,7 @@ frontendUiAuthSecret: "temp_secret"
 
 image:
   repository: oleg1997/bank-frontend
-  tag: "1.0.6"
+  tag: "1.1.0"
 
 startupProbe:
   initialDelaySeconds: 20

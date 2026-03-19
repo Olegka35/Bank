@@ -31,4 +31,4 @@ data:
       endpoints:
         web:
           exposure:
-            include: metrics
+            include: health, metrics, prometheus

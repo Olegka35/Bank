@@ -11,8 +11,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.cloud:spring-cloud-starter-consul-discovery")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("io.micrometer:micrometer-tracing-bridge-brave") // Трейсер Brave с мостом к нему
-    implementation("io.zipkin.reporter2:zipkin-reporter-brave") // Brave-репортер используется для отправки трасс
+    implementation("org.springframework.boot:spring-boot-starter-zipkin")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 }
 
 tasks.test {
