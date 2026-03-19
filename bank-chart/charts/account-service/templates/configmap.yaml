@@ -43,3 +43,7 @@ data:
             endpoint: {{ .Values.global.zipkin.endpoint }}
         sampling:
           probability: 1
+      endpoints:
+        web:
+          exposure:
+            include: metrics
