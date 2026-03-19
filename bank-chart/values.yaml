@@ -30,3 +30,8 @@ kafka:
 zipkin:
   service:
     type: NodePort
+
+prometheus:
+  server:
+    service:
+      type: NodePort
