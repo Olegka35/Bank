@@ -30,6 +30,3 @@ dependencies:
   - name: zipkin
     version: "0.4.0"
     repository: "https://zipkin.io/zipkin-helm"
-  - name: prometheus
-    version: "28.13.0"
-    repository: "https://prometheus-community.github.io/helm-charts"
