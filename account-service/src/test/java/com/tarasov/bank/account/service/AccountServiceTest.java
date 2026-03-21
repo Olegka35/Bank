@@ -1,13 +1,15 @@
 package com.tarasov.bank.account.service;
 
 
-import com.tarasov.bank.account.client.NotificationServiceClient;
 import com.tarasov.bank.account.model.dto.*;
 import com.tarasov.bank.account.model.Account;
 import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
 import com.tarasov.bank.account.producer.KafkaNotificationProducer;
 import com.tarasov.bank.account.repository.AccountRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,6 +38,15 @@ public class AccountServiceTest {
 
     @Mock
     private KafkaNotificationProducer notificationProducer;
+
+    @Mock
+    private MeterRegistry meterRegistry;
+    private Counter counter;
+
+    @BeforeEach
+    public void setUp() {
+        counter = mock(Counter.class);
+    }
 
     @Test
     public void canDetectAccountExistence() {
@@ -150,6 +161,7 @@ public class AccountServiceTest {
     public void withdrawExtraMoneyTest() {
         Account account = new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(account);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(counter);
 
         assertThrows(
                 InsufficientBalanceException.class,
@@ -161,6 +173,7 @@ public class AccountServiceTest {
     @CsvSource({"GET", "PUT"})
     public void updateTest_notExistingAccount(Action action) {
         when(accountRepository.findByLogin("Oleg")).thenReturn(null);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(counter);
 
         assertThrows(
                 AccountNotFoundException.class,
@@ -194,6 +207,7 @@ public class AccountServiceTest {
         Account recipient = new Account("Trakand", "Venera Trakand", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(sender);
         when(accountRepository.findByLogin("Trakand")).thenReturn(recipient);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(counter);
 
         assertThrows(
                 InsufficientBalanceException.class,
@@ -203,6 +217,7 @@ public class AccountServiceTest {
 
     @Test
     public void transferMoneyTest_selfTransferProhibition() {
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(counter);
         assertThrows(
                 IllegalArgumentException.class,
                 () -> accountService.transferMoney("Oleg", "Oleg", BigDecimal.valueOf(100_000))
@@ -214,6 +229,7 @@ public class AccountServiceTest {
         Account recipient = new Account("Trakand", "Venera Trakand", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(500_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(null);
         when(accountRepository.findByLogin("Trakand")).thenReturn(recipient);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(counter);
 
         assertThrows(
                 AccountNotFoundException.class,
@@ -226,6 +242,7 @@ public class AccountServiceTest {
         Account sender = new Account("Oleg", "Oleg Tarasov", LocalDate.of(1997, 3, 23), BigDecimal.valueOf(50_000));
         when(accountRepository.findByLogin("Oleg")).thenReturn(sender);
         when(accountRepository.findByLogin("Trakand")).thenReturn(null);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(counter);
 
         assertThrows(
                 AccountNotFoundException.class,

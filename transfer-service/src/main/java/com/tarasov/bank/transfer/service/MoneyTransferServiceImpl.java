@@ -5,6 +5,7 @@ import com.tarasov.bank.transfer.dto.BalanceResponse;
 import com.tarasov.bank.transfer.dto.MoneyTransferRequest;
 import com.tarasov.bank.transfer.dto.NotificationRequest;
 import com.tarasov.bank.transfer.producer.KafkaNotificationProducer;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     private final AccountServiceClient accountServiceClient;
     private final KafkaNotificationProducer notificationProducer;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public BalanceResponse transferMoney(String login, MoneyTransferRequest moneyTransferRequest) {
@@ -25,12 +27,17 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         BalanceResponse balanceResponse =
                 accountServiceClient.post(uri, moneyTransferRequest, BalanceResponse.class);
 
-        String notificationMessage =
-                String.format("Money transfer (%.2f р.) -> %s (Remaining balance: %.2f р.)",
-                        moneyTransferRequest.value(),
-                        moneyTransferRequest.login(),
-                        balanceResponse.balance());
-        notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
+        try {
+            String notificationMessage =
+                    String.format("Money transfer (%.2f р.) -> %s (Remaining balance: %.2f р.)",
+                            moneyTransferRequest.value(),
+                            moneyTransferRequest.login(),
+                            balanceResponse.balance());
+            notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
+        } catch (Exception e) {
+            meterRegistry.counter("error_notification", "login", login).increment();
+            throw e;
+        }
         return balanceResponse;
     }
 }
