@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: business-errors-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring-chart
+spec:
+  groups:
+    - name: bank.rules
+      rules:
+        - alert: NotificationErrors
+          expr: sum(rate(error_notification[5m])) > 0
+          for: 3m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Notification errors observed"
+            description: "Notification errors observed for last 3 minutes"
+        - alert: UpdateBalanceErrorsIncrease
+          expr: sum(rate(error_update_balance_total[5m])) > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "A lot of update balance errors observed"
+            description: "A lot of update balance errors observed during last 5 minutes"
+        - alert: MoneyTransferErrorsIncrease
+          expr: sum(rate(error_money_transfer_total[5m])) > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "A lot of money transfer errors observed"
+            description: "A lot of money transfer errors observed during last 5 minutes"
