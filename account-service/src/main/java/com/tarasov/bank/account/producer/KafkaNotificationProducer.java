@@ -11,6 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 
 @Component
@@ -25,10 +26,14 @@ public class KafkaNotificationProducer {
         LOGGER.info("Notification sent to Kafka: {}",  notificationRequest);
         ProducerRecord<String, NotificationRequest> record =
                 new ProducerRecord<>("account-notifications", notificationRequest.login(), notificationRequest);
-        record.headers()
-                .add("traceId", MDC.get("traceId").getBytes(StandardCharsets.UTF_8))
-                .add("spanId", MDC.get("spanId").getBytes(StandardCharsets.UTF_8))
-                .add("username", MDC.get("username").getBytes(StandardCharsets.UTF_8));
+        fillHeaderFromMDC(record, "traceId");
+        fillHeaderFromMDC(record, "spanId");
+        fillHeaderFromMDC(record, "username");
         kafkaTemplate.send(record);
+    }
+
+    private void fillHeaderFromMDC(ProducerRecord<String, NotificationRequest> record, String attr) {
+        Optional.ofNullable(MDC.get(attr))
+                .ifPresent(v -> record.headers().add(attr, v.getBytes(StandardCharsets.UTF_8)));
     }
 }

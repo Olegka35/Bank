@@ -59,10 +59,14 @@ public class AccountController {
     public BalanceResponse updateAccountBalance(@PathVariable String login,
                                                 @RequestBody @Valid BalanceUpdateRequest request) {
         MDC.put("username", login); // service type auth
-        LOGGER.info("Incoming request: POST /account/{}/case: {}", login, request);
-        var response = accountService.updateAccountBalance(login, request.action(), request.value());
-        LOGGER.info("Response: {}", response);
-        return response;
+        try {
+            LOGGER.info("Incoming request: POST /account/{}/case: {}", login, request);
+            var response = accountService.updateAccountBalance(login, request.action(), request.value());
+            LOGGER.info("Response: {}", response);
+            return response;
+        } finally {
+            MDC.remove("username");
+        }
     }
 
     @PostMapping("/account/{login}/transfer")
@@ -70,9 +74,13 @@ public class AccountController {
     public BalanceResponse transferMoney(@PathVariable String login,
                                          @RequestBody @Valid MoneyTransferRequest request) {
         MDC.put("username", login); // service type auth
-        LOGGER.info("Incoming request: POST /account/{}/transfer: {}", login, request);
-        var response =  accountService.transferMoney(login, request.login(), request.value());
-        LOGGER.info("Response: {}", response);
-        return response;
+        try {
+            LOGGER.info("Incoming request: POST /account/{}/transfer: {}", login, request);
+            var response = accountService.transferMoney(login, request.login(), request.value());
+            LOGGER.info("Response: {}", response);
+            return response;
+        } finally {
+            MDC.remove("username");
+        }
     }
 }
