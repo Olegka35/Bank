@@ -33,3 +33,17 @@ data:
                     - Path=/transfer/**
                   filters:
                     - name: JwtTokenRelay
+    management:
+      tracing:
+        export:
+          zipkin:
+            endpoint: {{ .Values.global.zipkin.endpoint }}
+        sampling:
+          probability: 1
+      endpoints:
+        web:
+          exposure:
+            include: health, metrics, prometheus
+    logging:
+      level:
+        com.tarasov.bank: INFO

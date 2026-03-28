@@ -20,7 +20,18 @@ global:
     retry:
       amount: 3
       backoff: 1000
+  zipkin:
+    endpoint: http://bank-chart-zipkin:9411/api/v2/spans
 
 kafka:
   broker:
     replicaCount: 2
+
+zipkin:
+  service:
+    type: NodePort
+
+prometheus:
+  server:
+    service:
+      type: NodePort

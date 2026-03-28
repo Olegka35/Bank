@@ -1,0 +1,125 @@
+filebeat:
+  daemonset:
+    extraVolumes:
+      - name: data
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: data
+        mountPath: /usr/share/filebeat/data
+    filebeatConfig:
+      filebeat.yml: |
+        filebeat.inputs:
+          - type: container
+            paths:
+              - /var/log/containers/*.log
+        
+        processors:
+          - add_kubernetes_metadata:
+              host: ${NODE_NAME}
+              matchers:
+                - logs_path:
+                    logs_path: "/var/log/containers/"
+        
+        output.logstash:
+          hosts: ["elk-chart-logstash:5044"]
+
+logstash:
+  extraEnvs:
+    - name: ELASTIC_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: elasticsearch-pass
+          key: password
+
+  service:
+    type: ClusterIP
+    ports:
+      - name: beats
+        port: 5044
+        protocol: TCP
+        targetPort: 5044
+
+  logstashPipeline:
+    logstash.conf: |
+      input {
+        beats {
+          port => 5044
+        }
+      }
+      filter {
+        json {
+          source => "message"
+          target => ""
+        }
+      }
+      output {
+        elasticsearch {
+            hosts => ["https://elasticsearch-master:9200"]
+            user => "elastic"
+            password => "${ELASTIC_PASSWORD}"
+            index => "logs-test"
+            ssl => true
+            ssl_certificate_verification => false
+        }
+      }
+
+elasticsearch:
+  replicas: 3
+
+  service:
+    type: NodePort
+
+  secret:
+    existingSecret: "elasticsearch-pass"
+    passwordKey: "password"
+
+  esConfig:
+    elasticsearch.yml: |
+      cluster.name: logs-cluster
+      network.host: 0.0.0.0
+      discovery.seed_hosts: 
+        - elasticsearch-master-0.elasticsearch-master-headless
+        - elasticsearch-master-1.elasticsearch-master-headless
+        - elasticsearch-master-2.elasticsearch-master-headless
+      cluster.initial_master_nodes:
+        - elasticsearch-master-0
+        - elasticsearch-master-1
+        - elasticsearch-master-2
+      xpack.security.enabled: false
+
+  antiAffinity: "soft"
+
+  extraEnvs:
+    - name: ES_JAVA_OPTS
+      value: "-Xms1g -Xmx1g"
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 5Gi
+
+
+kibana:
+  replicas: 1
+  elasticsearchHosts: "https://elasticsearch-master:9200"
+
+  service:
+    type: NodePort
+    nodePort: 32000
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi

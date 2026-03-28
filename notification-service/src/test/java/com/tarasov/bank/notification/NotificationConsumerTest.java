@@ -4,10 +4,12 @@ package com.tarasov.bank.notification;
 import com.tarasov.bank.notification.configuration.NoSecurityConfig;
 import com.tarasov.bank.notification.dto.NotificationRequest;
 import com.tarasov.bank.notification.service.NotificationProcessService;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -21,6 +23,7 @@ import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 
@@ -80,7 +83,13 @@ public class NotificationConsumerTest {
     @Test
     public void testKafkaNotificationConsumed() throws InterruptedException {
         NotificationRequest notification = new NotificationRequest("oleg", "Money successfully transferred: 10.000$");
-        kafkaTemplate.send("transfer-notifications", "oleg", notification);
+        ProducerRecord<String, NotificationRequest> record =
+                new ProducerRecord<>("transfer-notifications", "oleg", notification);
+        record.headers()
+                .add("traceId", "test_trace".getBytes(StandardCharsets.UTF_8))
+                .add("spanId", "test_spanId".getBytes(StandardCharsets.UTF_8))
+                .add("username", "oleg".getBytes(StandardCharsets.UTF_8));
+        kafkaTemplate.send(record);
 
         verify(notificationProcessService, timeout(5000))
                 .processNotification(notification);

@@ -23,4 +23,16 @@ data:
 
     logging:
       level:
-        com.tarasov.bank.notification.service: INFO
+        com.tarasov.bank: INFO
+
+    management:
+      tracing:
+        export:
+          zipkin:
+            endpoint: {{ .Values.global.zipkin.endpoint }}
+        sampling:
+          probability: 1
+      endpoints:
+        web:
+          exposure:
+            include: health, metrics, prometheus

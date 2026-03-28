@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(project(":service-common"))
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-restclient")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
@@ -20,6 +21,9 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-consul-discovery")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-zipkin")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
 }
 
 tasks.test {

@@ -1,0 +1,17 @@
+apiVersion: v2
+name: elk-chart
+description: Chart for ELK stack components
+version: 1.0.0
+dependencies:
+  - name: logstash
+    version: 8.5.1
+    repository: https://helm.elastic.co
+  - name: filebeat
+    version: 8.5.1
+    repository: https://helm.elastic.co
+  - name: elasticsearch
+    version: 8.5.1
+    repository: https://helm.elastic.co
+  - name: kibana
+    version: 8.5.1
+    repository: https://helm.elastic.co

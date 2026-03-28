@@ -6,6 +6,7 @@ import com.tarasov.bank.account.model.exception.AccountNotFoundException;
 import com.tarasov.bank.account.model.exception.InsufficientBalanceException;
 import com.tarasov.bank.account.producer.KafkaNotificationProducer;
 import com.tarasov.bank.account.repository.AccountRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final KafkaNotificationProducer notificationProducer;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public boolean existsByLogin(String login) {
@@ -52,50 +54,68 @@ public class AccountServiceImpl implements AccountService {
         account.setBirthdate(birthdate);
         account = accountRepository.save(account);
 
-        String notificationMessage =
-                String.format("Account details updated: full name -> %s, birth date -> %s",
-                        fullName, birthdate);
-        notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
+        try {
+            String notificationMessage =
+                    String.format("Account details updated: full name -> %s, birth date -> %s",
+                            fullName, birthdate);
+            notificationProducer.sendNotification(new NotificationRequest(login, notificationMessage));
+        } catch (Exception e) {
+            meterRegistry.counter("error_notification", "login", login).increment();
+            throw e;
+        }
         return new AccountUpdateResponse(account.getLogin(), account.getFullName(), account.getBirthdate());
     }
 
     @Override
     @Transactional
     public BalanceResponse updateAccountBalance(String login, Action action, BigDecimal amount) {
-        Account account = accountRepository.findByLogin(login);
-        if (account == null) {
-            throw new AccountNotFoundException();
-        }
-        if (Action.GET.equals(action)) {
-            if (account.getBalance().compareTo(amount) < 0) {
-                throw new InsufficientBalanceException();
+        try {
+            Account account = accountRepository.findByLogin(login);
+            if (account == null) {
+                throw new AccountNotFoundException();
             }
-            account.setBalance(account.getBalance().subtract(amount));
-        } else if (Action.PUT.equals(action)) {
-            account.setBalance(account.getBalance().add(amount));
+            if (Action.GET.equals(action)) {
+                if (account.getBalance().compareTo(amount) < 0) {
+                    throw new InsufficientBalanceException();
+                }
+                account.setBalance(account.getBalance().subtract(amount));
+            } else if (Action.PUT.equals(action)) {
+                account.setBalance(account.getBalance().add(amount));
+            }
+            account = accountRepository.save(account);
+            return new BalanceResponse(account.getBalance());
+        } catch (Exception e) {
+            meterRegistry.counter("error_update_balance", "login", login).increment();
+            throw e;
         }
-        account = accountRepository.save(account);
-        return new BalanceResponse(account.getBalance());
     }
 
     @Override
     @Transactional
     public BalanceResponse transferMoney(String senderLogin, String recipientLogin, BigDecimal amount) {
-        if (senderLogin.equals(recipientLogin)) {
-            throw new IllegalArgumentException("Not possible to transfer money to yourselves");
+        try {
+            if (senderLogin.equals(recipientLogin)) {
+                throw new IllegalArgumentException("Not possible to transfer money to yourselves");
+            }
+            Account sender = accountRepository.findByLogin(senderLogin);
+            Account recipient = accountRepository.findByLogin(recipientLogin);
+            if (sender == null || recipient == null) {
+                throw new AccountNotFoundException();
+            }
+            if (sender.getBalance().compareTo(amount) < 0) {
+                throw new InsufficientBalanceException();
+            }
+            sender.setBalance(sender.getBalance().subtract(amount));
+            recipient.setBalance(recipient.getBalance().add(amount));
+            sender = accountRepository.save(sender);
+            accountRepository.save(recipient);
+            return new BalanceResponse(sender.getBalance());
+        } catch (Exception e) {
+            meterRegistry.counter("error_money_transfer",
+                            "sender", senderLogin,
+                            "recipient", recipientLogin)
+                    .increment();
+            throw e;
         }
-        Account sender = accountRepository.findByLogin(senderLogin);
-        Account recipient = accountRepository.findByLogin(recipientLogin);
-        if (sender == null || recipient == null) {
-            throw new AccountNotFoundException();
-        }
-        if (sender.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientBalanceException();
-        }
-        sender.setBalance(sender.getBalance().subtract(amount));
-        recipient.setBalance(recipient.getBalance().add(amount));
-        sender = accountRepository.save(sender);
-        accountRepository.save(recipient);
-        return new BalanceResponse(sender.getBalance());
     }
 }

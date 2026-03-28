@@ -36,3 +36,17 @@ data:
           properties:
             enable.idempotence: true
             retry.backoff.ms: {{ .Values.global.notifications.retry.backoff }}
+    management:
+      tracing:
+        export:
+          zipkin:
+            endpoint: {{ .Values.global.zipkin.endpoint }}
+        sampling:
+          probability: 1
+      endpoints:
+        web:
+          exposure:
+            include: health, metrics, prometheus
+    logging:
+      level:
+        com.tarasov.bank: INFO
