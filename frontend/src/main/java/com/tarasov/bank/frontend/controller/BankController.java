@@ -29,6 +29,7 @@ public class BankController {
                         @RequestParam(value = "info", required = false) String info,
                         Model model) {
         try {
+            LOGGER.info("Incoming request: GET /, errors: {}, info: {}", errors, info);
             AccountResponse response = bankService.getAccountDetails();
             if (response != null) {
                 model.addAttribute("name", response.name());
@@ -38,6 +39,7 @@ public class BankController {
             }
             model.addAttribute("errors", errors);
             model.addAttribute("info", info);
+            LOGGER.info("Response: {}", response);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
             model.addAttribute("errors", "Unable to load account information");
@@ -47,19 +49,25 @@ public class BankController {
 
     @PostMapping("/account")
     public String updateAccountDetails(@Valid AccountUpdateRequest request) {
+        LOGGER.info("Incoming request: POST /account,  {}", request);
         bankService.updateAccount(request);
+        LOGGER.info("POST /account processed");
         return "redirect:/?info=Account details updated";
     }
 
     @PostMapping("/cash")
     public String updateBalance(@Valid BalanceUpdateRequest request) {
+        LOGGER.info("Incoming request: POST /cash,  {}", request);
         bankService.updateBalance(request);
+        LOGGER.info("POST /cash processed");
         return "redirect:/?info=Balance updated";
     }
 
     @PostMapping("/transfer")
     public String transferMoney(MoneyTransferRequest request) {
+        LOGGER.info("Incoming request: POST /transfer,  {}", request);
         bankService.transferMoney(request);
+        LOGGER.info("POST /transfer processed");
         return "redirect:/?info=Money transferred";
     }
 }

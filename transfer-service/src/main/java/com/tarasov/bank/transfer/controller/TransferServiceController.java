@@ -35,7 +35,10 @@ public class TransferServiceController {
     @PreAuthorize("hasRole('MONEY_TRANSFER')")
     public BalanceResponse updateAccount(@RequestBody @Valid MoneyTransferRequest request,
                                          Authentication authentication) {
-        return moneyTransferService.transferMoney(authentication.getName(), request);
+        LOGGER.info("Incoming request: POST /transfer: {}", request);
+        var response = moneyTransferService.transferMoney(authentication.getName(), request);
+        LOGGER.info("Response: {}", response);
+        return response;
     }
 
     @ExceptionHandler({ IllegalArgumentException.class })
