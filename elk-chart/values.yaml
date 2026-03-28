@@ -1,5 +1,11 @@
 filebeat:
   daemonset:
+    extraVolumes:
+      - name: data
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: data
+        mountPath: /usr/share/filebeat/data
     filebeatConfig:
       filebeat.yml: |
         filebeat.inputs:
