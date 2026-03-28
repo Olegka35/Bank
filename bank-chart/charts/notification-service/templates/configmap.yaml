@@ -23,7 +23,7 @@ data:
 
     logging:
       level:
-        com.tarasov.bank.notification.service: INFO
+        com.tarasov.bank: INFO
 
     management:
       tracing:

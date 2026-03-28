@@ -45,3 +45,7 @@ data:
         web:
           exposure:
             include: health, metrics, prometheus
+
+    logging:
+      level:
+        com.tarasov.bank: INFO

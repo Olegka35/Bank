@@ -40,6 +40,12 @@ logstash:
           port => 5044
         }
       }
+      filter {
+        json {
+          source => "message"
+          target => ""
+        }
+      }
       output {
         elasticsearch {
             hosts => ["https://elasticsearch-master:9200"]
